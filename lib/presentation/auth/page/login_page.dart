@@ -86,6 +86,10 @@ class _LoginPageState extends State<LoginPage> {
                       if (value == null || value.isEmpty) {
                         return 'Please enter your email';
                       }
+                      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                          .hasMatch(value)) {
+                        return 'Please enter a valid email';
+                      }
                       return null;
                     },
                   ),
@@ -105,8 +109,8 @@ class _LoginPageState extends State<LoginPage> {
                       if (value == null || value.isEmpty) {
                         return 'Please enter your password';
                       }
-                      if (value.length < 6) {
-                        return 'Password must be at least 6 characters long';
+                      if (value.length < 8) {
+                        return 'Password must be at least 8 characters long';
                       }
                       return null;
                     },

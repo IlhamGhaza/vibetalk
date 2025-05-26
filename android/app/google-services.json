@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "170598160506",
+    "project_id": "vibetalk-1994d",
+    "storage_bucket": "vibetalk-1994d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:170598160506:android:747804992d5b6abd2743c3",
+        "android_client_info": {
+          "package_name": "com.igz.vibetalk"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtjCPjFfUhpI1MSG8sUoa60TGDLS1XbcM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
