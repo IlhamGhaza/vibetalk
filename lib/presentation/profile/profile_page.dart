@@ -1,9 +1,14 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vibetalk/core/utils/snackbar_utils.dart';
+import 'package:vibetalk/presentation/profile/edit_profile_page.dart';
 import '../../core/bloc/theme_cubit.dart';
 import '../../core/theme.dart';
+import '../../data/datasources/firebase_datasource.dart';
+import '../../data/models/user_model.dart';
 import '../auth/page/splash_page.dart';
 import 'language_selection_page.dart';
 
@@ -15,8 +20,51 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  UserModel? _currentUser;
+
+  void _getCurrentUser() async {
+    final firebaseUser = FirebaseAuth.instance.currentUser;
+
+    if (firebaseUser == null) {
+      if (mounted) {
+        setState(() {
+          _currentUser = null;
+        });
+      }
+      return;
+    }
+
+    try {
+      final UserModel? fetchedUser = await FirebaseDatasource.instance.getUser(
+        firebaseUser.uid,
+      );
+      if (mounted) {
+        setState(() {
+          _currentUser = fetchedUser;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        log(e.toString());
+        SnackbarUtils(
+          text: 'Gagal memuat data profil: $e',
+          backgroundColor: Colors.red,
+        ).showErrorSnackBar(context);
+        setState(() {
+          _currentUser = null;
+        });
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getCurrentUser();
+  }
+
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final String _userName = 'Nama Pengguna';
+  final String _username = 'Nama Pengguna';
   final String _userEmail = 'email.pengguna@example.com';
 
   @override
@@ -34,26 +82,73 @@ class _ProfilePageState extends State<ProfilePage> {
               Center(
                 child: Column(
                   children: [
-                    CircleAvatar(
-                      radius: 50,
-
-                      backgroundColor: Theme.of(context).primaryColor,
-                      child: Icon(
-                        Icons.person,
-                        size: 60,
-
-                        color: Theme.of(context).colorScheme.onPrimary,
+                    InkWell(
+                      onTap: () async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const EditProfilePage(),
+                          ),
+                        ).then((_) {
+                          // Refresh user data when returning from EditProfilePage
+                          _getCurrentUser();
+                        });
+                      },
+                      child: CircleAvatar(
+                        radius: 50,
+                        backgroundColor: Theme.of(context).primaryColor,
+                        child:
+                            _currentUser == null || _currentUser!.photo.isEmpty
+                            ? Icon(
+                                Icons.person,
+                                size: 60,
+                                color: Theme.of(context).colorScheme.onPrimary,
+                              )
+                            : ClipOval(
+                                child: Image.network(
+                                  _currentUser!.photo,
+                                  width: 100,
+                                  height: 100,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Icon(
+                                      Icons.person,
+                                      size: 60,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onPrimary,
+                                    );
+                                  },
+                                  loadingBuilder:
+                                      (context, child, loadingProgress) {
+                                        if (loadingProgress == null)
+                                          return child;
+                                        return Center(
+                                          child: CircularProgressIndicator(
+                                            value:
+                                                loadingProgress
+                                                        .expectedTotalBytes !=
+                                                    null
+                                                ? loadingProgress
+                                                          .cumulativeBytesLoaded /
+                                                      loadingProgress
+                                                          .expectedTotalBytes!
+                                                : null,
+                                          ),
+                                        );
+                                      },
+                                ),
+                              ),
                       ),
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      _userName,
+                      _currentUser?.userName ?? _username,
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      _userEmail,
-
+                      _currentUser?.email ?? _userEmail,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: Theme.of(context).textTheme.labelSmall?.color,
                       ),
@@ -78,17 +173,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.easeInOut,
                 decoration: BoxDecoration(
-                  // color: Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(12),
-                  // boxShadow: [
-                  //   BoxShadow(
-                  //     color: Theme.of(
-                  //       context,
-                  //     ).colorScheme.onSurface.withValues(alpha: 0.1),
-                  //     blurRadius: 8,
-                  //     offset: const Offset(0, 2),
-                  //   ),
-                  // ],
                 ),
                 child: ListTile(
                   leading: AnimatedSwitcher(
@@ -150,7 +235,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   style: TextStyle(color: Theme.of(context).colorScheme.error),
                 ),
                 onTap: () {
-                  //show dialog
                   showDialog(
                     context: context,
                     builder: (context) {
@@ -167,7 +251,10 @@ class _ProfilePageState extends State<ProfilePage> {
                           InkWell(
                             onTap: () {
                               _auth.signOut();
-                              SnackbarUtils(text: 'Logout Success', backgroundColor: Colors.green).showSuccessSnackBar(context);
+                              SnackbarUtils(
+                                text: 'Logout Success',
+                                backgroundColor: Colors.green,
+                              ).showSuccessSnackBar(context);
                               Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
@@ -186,9 +273,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               ),
                               child: Text(
                                 'Logout',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                ),
+                                style: TextStyle(color: Colors.white),
                               ),
                             ),
                           ),
@@ -196,10 +281,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       );
                     },
                   );
-                  //  Navigator.pushReplacement(
-                  //   context,
-                  //   MaterialPageRoute(builder: (context) => const SplashPage()),
-                  // );
                 },
               ),
             ],

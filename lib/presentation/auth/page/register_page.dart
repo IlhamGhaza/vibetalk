@@ -61,8 +61,9 @@ class _RegisterPageState extends State<RegisterPage> {
             .doc(authResult.user?.uid)
             .set({
               'email': _emailController.text,
-              'username': _nameController.text.trim().replaceAll(' ', ''),
+              'userName': _nameController.text.trim().replaceAll(' ', ''),
               'name': _nameController.text,
+              'photo': '',
             });
         debugPrint('Register success, $authResult');
         SnackbarUtils(
@@ -174,11 +175,11 @@ class _RegisterPageState extends State<RegisterPage> {
                           if (value.length < 8) {
                             return 'Password must be at least 8 characters';
                           }
-                          if (!RegExp(
-                            r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$',
-                          ).hasMatch(value)) {
-                            return 'Password must contain at least one uppercase letter, one lowercase letter, and one number';
-                          }
+                          // if (!RegExp(
+                          //   r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$',
+                          // ).hasMatch(value)) {
+                          //   return 'Password must contain at least one uppercase letter, one lowercase letter, and one number';
+                          // }
                           return null;
                         },
                       ),

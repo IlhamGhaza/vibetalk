@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,6 +22,7 @@ class _SplashPageState extends State<SplashPage>
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  bool _hasNavigated = false;
 
   @override
   void dispose() {
@@ -32,7 +35,7 @@ class _SplashPageState extends State<SplashPage>
     super.initState();
 
     _controller = AnimationController(
-      duration: const Duration(seconds: 3),
+      duration: const Duration(seconds: 2),
       vsync: this,
     );
 
@@ -46,25 +49,61 @@ class _SplashPageState extends State<SplashPage>
       end: 1,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.elasticOut));
 
-    _controller.forward().whenComplete(() {
-      _checkAuthAndNavigate();
-    });
+    _controller.forward();
+    _initializeApp();
   }
 
-  Future<void> _checkAuthAndNavigate() async {
-    User? user = await _auth.authStateChanges().first;
+  Future<void> _initializeApp() async {
+    try {
+      await Future.delayed(const Duration(milliseconds: 500));
 
-    if (!mounted) return;
+      User? currentUser = _auth.currentUser;
 
-    if (user != null) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const NavBar()),
-      );
-    } else {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const LoginPage()),
-      );
+      if (currentUser != null) {
+        await _controller.forward();
+        log('User is already logged in. Navigating to home.');
+        _navigateToHome();
+      } else {
+        _auth.authStateChanges().listen((User? user) {
+          if (!_hasNavigated && mounted) {
+            if (user != null) {
+              log('User is logged in. Navigating to home.');
+              _navigateToHome();
+            } else {
+              log('User is not logged in. Navigating to login.');
+              Future.delayed(const Duration(milliseconds: 1500), () {
+                if (!_hasNavigated && mounted) {
+                  _navigateToLogin();
+                }
+              });
+            }
+          }
+        });
+      }
+    } catch (e) {
+      debugPrint('Error initializing app: $e');
+
+      await _controller.forward();
+      _navigateToLogin();
     }
+  }
+
+  void _navigateToHome() {
+    if (_hasNavigated || !mounted) return;
+
+    _hasNavigated = true;
+    Navigator.of(
+      context,
+    ).pushReplacement(MaterialPageRoute(builder: (context) => const NavBar()));
+  }
+
+  void _navigateToLogin() {
+    if (_hasNavigated || !mounted) return;
+
+    _hasNavigated = true;
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => const LoginPage()),
+    );
   }
 
   @override
@@ -72,7 +111,6 @@ class _SplashPageState extends State<SplashPage>
     return BlocBuilder<ThemeCubit, ThemeMode>(
       builder: (context, themeMode) {
         final isDarkMode = themeMode == ThemeMode.dark;
-        final theme = isDarkMode ? AppTheme.darkTheme : AppTheme.lightTheme;
         return Scaffold(
           body: Container(
             color: Theme.of(context).scaffoldBackgroundColor,
@@ -94,12 +132,24 @@ class _SplashPageState extends State<SplashPage>
                                 ? AppTheme.lightTheme.primaryColor
                                 : AppTheme.darkTheme.primaryColor,
                           ),
-
                           const SizedBox(height: 20),
                           Text(
                             'Vibetalk',
                             style: Theme.of(context).textTheme.titleLarge
                                 ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 40),
+                          SizedBox(
+                            width: 30,
+                            height: 30,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                isDarkMode
+                                    ? AppTheme.lightTheme.primaryColor
+                                    : AppTheme.darkTheme.primaryColor,
+                              ),
+                            ),
                           ),
                         ],
                       ),

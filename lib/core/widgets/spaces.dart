@@ -1,21 +1,17 @@
 import 'package:flutter/material.dart';
 
-class SpacesHeight extends StatelessWidget {
+class SpaceHeight extends StatelessWidget {
   final double height;
-  const SpacesHeight({super.key, required this.height});
+  const SpaceHeight(this.height, {super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return SizedBox(height: height);
-  }
+  Widget build(BuildContext context) => SizedBox(height: height);
 }
 
-class SpacesWidth extends StatelessWidget {
+class SpaceWidth extends StatelessWidget {
   final double width;
-  const SpacesWidth({super.key, required this.width});
+  const SpaceWidth(this.width, {super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return SizedBox(width: width);
-  }
+  Widget build(BuildContext context) => SizedBox(width: width);
 }
