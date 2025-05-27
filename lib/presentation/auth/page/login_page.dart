@@ -1,4 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../core/bloc/theme_cubit.dart';
+import '../../../core/theme.dart';
+import '../../../core/utils/snackbar_utils.dart';
 import '../../../nav_bar.dart';
 import 'register_page.dart';
 
@@ -18,7 +23,7 @@ class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
-  // bool _isLoading = false;
+  FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   void dispose() {
@@ -33,142 +38,207 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
-  void _handleLogin() {
+  void _handleLogin() async {
     if (_formKey.currentState?.validate() ?? false) {
-      // Form is valid, handle registration
-
-      // Navigate to home or show success
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const NavBar()),
-      );
+      try {
+        await _auth.signInWithEmailAndPassword(
+          email: _emailController.text,
+          password: _passwordController.text,
+        );
+        SnackbarUtils(
+          text: 'Login success',
+          backgroundColor: Colors.green,
+        ).showSuccessSnackBar(context);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const NavBar()),
+        );
+      } catch (e) {
+        SnackbarUtils(text: 'Login failed', backgroundColor: Colors.red);
+        debugPrint(e.toString());
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          // physics: const NeverScrollableScrollPhysics(),
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                spacing: 10,
-                children: [
-                  const SizedBox(height: 10),
-                  const Center(
-                    child: CircleAvatar(
-                      radius: 50,
-                      backgroundColor: Colors.blue,
-                      child: Icon(Icons.message, size: 60, color: Colors.white),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  const Text(
-                    'Masuk',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                  const Text(
-                    'Silahkan masuk untuk melanjutkan',
-                    style: TextStyle(fontSize: 14, color: Colors.grey),
-                  ),
-                  AuthTextField(
-                    suffixIcon: const Icon(Icons.email),
-                    label: 'Email',
-                    controller: _emailController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your email';
-                      }
-                      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                          .hasMatch(value)) {
-                        return 'Please enter a valid email';
-                      }
-                      return null;
-                    },
-                  ),
-                  AuthTextField(
-                    label: 'Password',
-                    controller: _passwordController,
-                    obscureText: _obscurePassword,
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscurePassword
-                            ? Icons.visibility_off
-                            : Icons.visibility,
-                      ),
-                      onPressed: _togglePasswordVisibility,
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your password';
-                      }
-                      if (value.length < 8) {
-                        return 'Password must be at least 8 characters long';
-                      }
-                      return null;
-                    },
-                  ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const ForgotPasswordPage(),
-                          ),
-                        );
-                      },
-                      child: Text(
-                        'Lupa Password?',
-                        style: TextStyle(
-                          color: Colors.blue,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ),
-                  AuthButton(
-                    text: 'Masuk',
-                    // isLoading: _isLoading,
-                    onPressed: _handleLogin,
-                  ),
-
-                  const SizedBox(height: 5),
-                  Row(
+    return BlocBuilder<ThemeCubit, ThemeMode>(
+      builder: (context, themeMode) {
+        final isDarkMode = themeMode == ThemeMode.dark;
+        final theme = isDarkMode ? AppTheme.darkTheme : AppTheme.lightTheme;
+        return Scaffold(
+          body: SafeArea(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.all(20),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+
                     children: [
-                      const Text('Belum punya akun?'),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const RegisterPage(),
-                            ),
-                          );
-                        },
-                        child: const Text(
-                          'Daftar',
-                          style: TextStyle(color: Colors.blue),
+                      const SizedBox(height: 28),
+                      const CircleAvatar(
+                        radius: 50,
+                        backgroundColor: DefaultColors.primaryColor,
+                        child: Icon(
+                          Icons.message,
+                          size: 60,
+                          color: Colors.white,
                         ),
                       ),
+                      const SizedBox(height: 24),
+                      Text(
+                        'Login',
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Login to continue',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: DefaultColors.greyText,
+                        ),
+                      ),
+                      const SizedBox(height: 32),
+                      AuthTextField(
+                        textInputAction: TextInputAction.next,
+                        suffixIcon: const Icon(Icons.email),
+                        label: 'Email',
+                        keyboardType: TextInputType.emailAddress,
+                        controller: _emailController,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your email';
+                          }
+                          if (!RegExp(
+                            r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                          ).hasMatch(value)) {
+                            return 'Please enter a valid email';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      AuthTextField(
+                        textInputAction: TextInputAction.done,
+                        label: 'Password',
+                        controller: _passwordController,
+                        keyboardType: TextInputType.visiblePassword,
+                        obscureText: _obscurePassword,
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _obscurePassword
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                          ),
+                          onPressed: _togglePasswordVisibility,
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your password';
+                          }
+                          if (value.length < 8) {
+                            return 'Password must be at least 8 characters';
+                          }
+
+                          return null;
+                        },
+                      ),
+
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const ForgotPasswordPage(),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            'Forgot Password?',
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.primaryColor,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      AuthButton(text: 'Login', onPressed: _handleLogin),
+                      const SizedBox(height: 24),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Don\'t have an account?',
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: isDarkMode
+                                  ? DefaultColors.whiteText
+                                  : DefaultColors.lightTextColor,
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const RegisterPage(),
+                                ),
+                              );
+                            },
+                            child: Text(
+                              'Register',
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: theme.primaryColor,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+                      ElevatedButton.icon(
+                        icon: Image.network(
+                          'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png',
+                          height: 24.0,
+                          width: 24.0,
+                        ),
+                        label: Text(
+                          'Login with Google',
+                          style: TextStyle(
+                            color: isDarkMode ? Colors.white : Colors.black87,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: isDarkMode
+                              ? Colors.grey[700]
+                              : Colors.white,
+                          minimumSize: const Size(double.infinity, 50),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                            side: BorderSide(
+                              color: isDarkMode
+                                  ? Colors.grey[600]!
+                                  : Colors.grey[300]!,
+                            ),
+                          ),
+                          elevation: 2,
+                        ),
+                        onPressed: () {},
+                      ),
+                      const SizedBox(height: 24),
                     ],
                   ),
-                  const SizedBox(height: 10),
-                ],
+                ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

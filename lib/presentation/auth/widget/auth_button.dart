@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/theme.dart';
+
 class AuthButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
@@ -22,10 +24,10 @@ class AuthButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: isOutlined ? Colors.transparent : Colors.blue,
-          foregroundColor: isOutlined ? Colors.blue : Colors.white,
+          backgroundColor: isOutlined ? Colors.transparent : DefaultColors.primaryColor,
+          foregroundColor: isOutlined ? DefaultColors.primaryColor : Colors.white,
           elevation: isOutlined ? 0 : 2,
-          side: isOutlined ? BorderSide(color: Colors.blue) : null,
+          side: isOutlined ? BorderSide(color: DefaultColors.primaryColor) : null,
           padding: const EdgeInsets.symmetric(vertical: 12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -44,7 +46,7 @@ class AuthButton extends StatelessWidget {
                 : Text(
                   text,
                   style: TextStyle(
-                    color: isOutlined ? Colors.lightBlueAccent : Colors.white,
+                    color: isOutlined ? DefaultColors.primaryColor : Colors.white,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
