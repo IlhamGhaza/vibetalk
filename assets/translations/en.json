@@ -1,0 +1,86 @@
+{
+  "app": {
+    "title": "VibeTalk",
+    "welcome": "Welcome to VibeTalk",
+    "setting": "Setting",
+    "yes": "Yes",
+    "no": "No",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "select_language": "Select Language"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "logout_confirmation": "Are you sure you want to log out?",
+    "username": "Username",
+    "email": "Email",
+    "password": "Password",
+    "login_subtitle": "Login to continue",
+    "register_subtitle": "Create your account",
+    "username_label": "Username",
+    "confirm_password_label": "Confirm Password",
+    "forgot_password_prompt": "Forgot your password?",
+    "dont_have_account_prompt": "Don't have an account?",
+    "already_have_account_prompt": "Already have an account?",
+    "login_with_google_button": "Login with Google",
+    "validation_email_empty": "Please enter your email",
+    "validation_email_invalid": "Please enter a valid email",
+    "validation_password_empty": "Please enter your password",
+    "validation_password_min_length": "Password must be at least 8 characters",
+    "validation_username_empty": "Please enter your name",
+    "validation_confirm_password_empty": "Please confirm your password",
+    "validation_password_mismatch": "Passwords do not match",
+    "snackbar_login_success": "Login successful",
+    "snackbar_login_failed": "Login failed",
+    "snackbar_register_success": "Registration successful",
+    "snackbar_register_failed": "Registration failed",
+    "snackbar_logout_success": "Logout successful",
+    "snackbar_logout_failed": "Logout failed",
+    "user_not_found": "Failed, please log in again",
+    "user_not": "User not found"
+  },
+  "home": {
+    "add_story": "Add Story",
+    "new_conversation": "New Conversation",
+    "no_conversation": "No conversations yet",
+    "no_story": "No stories yet",
+    "no_message": "No messages yet",
+    "conversation": "Conversation"
+  },
+  "contact": {
+    "all_members": "All Members",
+    "users_section_title": "Users",
+    "error_something_went_wrong": "Something went wrong!"
+  },
+  "chat": {
+    "type_message": "Type a message",
+    "chat_sent_an_image": "Sent an image"
+  },
+  "profile": {
+    "profile": "Profile",
+    "language": "Language",
+    "theme": "Dark Mode",
+    "english": "English",
+    "indonesian": "Indonesian",
+    "korean": "Korean",
+    "success_edit": "Profile updated successfully",
+    "failed_upload_image": "Image upload failed",
+    "max_image_file": "Maximum file size is 5MB.",
+    "failed_edit": "Profile update failed"
+  },
+  "fetch": {
+    "failed_fetch_user": "Failed to fetch user"
+  },
+  "conversation": {
+    "user": "User"
+  },
+  "permission": {
+    "gallery": "Gallery",
+    "camera": "Camera",
+    "camera_denied": "Failed to access the camera",
+    "gallery_denied": "Failed to access the gallery"
+  }
+}

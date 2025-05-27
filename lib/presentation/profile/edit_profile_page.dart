@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -72,7 +73,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     } catch (e) {
       if (mounted) {
         SnackbarUtils(
-          text: 'Gagal memuat data pengguna: $e',
+          text: 'failed_fetch_user: $e'.tr(),
           backgroundColor: Colors.red,
         ).showErrorSnackBar(context);
       }
@@ -91,7 +92,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       if (await imageFile.length() > maxFileSize) {
         if (mounted) {
           SnackbarUtils(
-            text: 'Ukuran file maksimal adalah 5MB.',
+            text: 'max_image_file'.tr(),
             backgroundColor: Colors.red,
           ).showErrorSnackBar(context);
         }
@@ -107,7 +108,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     } catch (e) {
       if (mounted) {
         SnackbarUtils(
-          text: 'Gagal mengunggah gambar: $e',
+          text: 'failed_upload_image: $e'.tr(),
           backgroundColor: Colors.red,
         ).showErrorSnackBar(context);
       }
@@ -129,7 +130,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       if (user == null) {
         if (mounted) {
           SnackbarUtils(
-            text: 'Pengguna tidak ditemukan. Silakan login kembali.',
+            text: 'auth.user_not_found'.tr(),
             backgroundColor: Colors.red,
           ).showErrorSnackBar(context);
         }
@@ -160,7 +161,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
       if (mounted) {
         SnackbarUtils(
-          text: 'Profil berhasil diperbarui!',
+          text: 'profile.success_edit'.tr(),
           backgroundColor: Colors.green,
         ).showSuccessSnackBar(context);
         await _fetchUserData();
@@ -170,7 +171,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       if (mounted) {
         log('Error saving profile: $e');
         SnackbarUtils(
-          text: 'Gagal menyimpan profil: $e',
+          text: 'profile.failed_edit: $e'.tr(),
           backgroundColor: Colors.red,
         ).showErrorSnackBar(context);
       }
@@ -201,7 +202,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     } catch (e) {
       if (mounted) {
         SnackbarUtils(
-          text: 'Tidak dapat mengakses kamera: $e',
+          text: 'permission.camera_denied $e'.tr(),
           backgroundColor: Colors.red,
         ).showErrorSnackBar(context);
       }
@@ -226,7 +227,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     } catch (e) {
       if (mounted) {
         SnackbarUtils(
-          text: 'Tidak dapat mengakses galeri: $e',
+          text: 'permission.gallery_denied $e'.tr(),
           backgroundColor: Colors.red,
         ).showErrorSnackBar(context);
       }
@@ -343,8 +344,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: _emailController,
-                      decoration: const InputDecoration(
-                        labelText: 'Email',
+                      decoration: InputDecoration(
+                        labelText: 'auth.email'.tr(),
                         border: OutlineInputBorder(),
                         prefixIcon: Icon(Icons.email_outlined),
                       ),
@@ -352,7 +353,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     ),
                     const SizedBox(height: 16),
                     AuthButton(
-                      text: 'Save',
+                      text: 'app.save'.tr(),
                       onPressed: () {
                         _saveProfile();
                       },
@@ -380,17 +381,17 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 children: [
                   _buildBottomSheetOption(
                     Icons.camera,
-                    'Kamera',
+                    'app.camera'.tr(),
                     onTap: _getImageFromCamera,
                   ),
                   _buildBottomSheetOption(
                     Icons.image,
-                    'Galeri',
+                    'app.gallery'.tr(),
                     onTap: _getImageFromGallery,
                   ),
                   _buildBottomSheetOption(
                     Icons.delete,
-                    'Hapus',
+                    'app.delete'.tr(),
                     onTap: _deleteProfileImage,
                   ),
                 ],

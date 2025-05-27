@@ -32,6 +32,7 @@ dependencies:
   connectivity_plus: ^6.1.4
   cupertino_icons: ^1.0.8
   device_info_plus: ^11.4.0
+  easy_localization: ^3.0.7+1
   file_picker: ^10.1.9
   firebase_analytics: ^11.4.6
   firebase_auth: ^5.5.4
@@ -94,7 +95,8 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
-
+  assets:
+    - assets/translations/
 # flutter_launcher_icons:
 #   android: true
 #   ios: true

@@ -1,0 +1,86 @@
+{
+    "app": {
+        "title": "VibeTalk",
+        "welcome": "VibeTalk에 오신 것을 환영합니다",
+        "setting": "설정",
+        "yes": "예",
+        "no": "아니오",
+        "save": "저장",
+        "cancel": "취소",
+        "delete": "삭제",
+        "select_language": "언어 선택"
+    },
+    "auth": {
+        "login": "로그인",
+        "register": "회원가입",
+        "logout": "로그아웃",
+        "logout_confirmation": "로그아웃하시겠습니까?",
+        "username": "사용자 이름",
+        "email": "이메일",
+        "password": "비밀번호",
+        "login_subtitle": "계속하려면 로그인하세요",
+        "register_subtitle": "계정을 생성하세요",
+        "username_label": "사용자 이름",
+        "confirm_password_label": "비밀번호 확인",
+        "forgot_password_prompt": "비밀번호를 잊으셨나요?",
+        "dont_have_account_prompt": "계정이 없으신가요?",
+        "already_have_account_prompt": "이미 계정이 있으신가요?",
+        "login_with_google_button": "Google로 로그인",
+        "validation_email_empty": "이메일을 입력하세요",
+        "validation_email_invalid": "유효한 이메일을 입력하세요",
+        "validation_password_empty": "비밀번호를 입력하세요",
+        "validation_password_min_length": "비밀번호는 최소 8자 이상이어야 합니다",
+        "validation_username_empty": "이름을 입력하세요",
+        "validation_confirm_password_empty": "비밀번호를 확인하세요",
+        "validation_password_mismatch": "비밀번호가 일치하지 않습니다",
+        "snackbar_login_success": "로그인 성공",
+        "snackbar_login_failed": "로그인 실패",
+        "snackbar_register_success": "회원가입 성공",
+        "snackbar_register_failed": "회원가입 실패",
+        "snackbar_logout_success": "로그아웃 성공",
+        "snackbar_logout_failed": "로그아웃 실패",
+        "user_not_found": "실패, 다시 로그인해주세요",
+        "user_not": "사용자를 찾을 수 없습니다"
+    },
+    "home": {
+        "add_story": "스토리 추가",
+        "new_conversation": "새 대화",
+        "no_conversation": "대화가 없습니다",
+        "no_story": "스토리가 없습니다",
+        "no_message": "메시지가 없습니다",
+        "conversation": "대화"
+    },
+    "contact": {
+        "all_members": "모든 멤버",
+        "users_section_title": "사용자",
+        "error_something_went_wrong": "문제가 발생했습니다!"
+    },
+    "chat": {
+        "type_message": "메시지를 입력하세요",
+        "chat_sent_an_image": "이미지를 보냈습니다"
+    },
+    "profile": {
+        "profile": "프로필",
+        "language": "언어",
+        "theme": "다크 모드",
+        "english": "영어",
+        "indonesian": "인도네시아어",
+        "korean": "한국어",
+        "success_edit": "프로필이 성공적으로 업데이트되었습니다",
+        "failed_upload_image": "이미지 업로드 실패",
+        "max_image_file": "최대 파일 크기는 5MB입니다.",
+        "failed_edit": "프로필 업데이트 실패"
+    },
+    "fetch": {
+        "failed_fetch_user": "사용자 정보를 불러오지 못했습니다"
+    },
+    "conversation": {
+        "user": "사용자"
+    },
+    "permission": {
+        "gallery": "갤러리",
+        "camera": "카메라",
+        "camera_denied": "카메라 접근 실패",
+        "gallery_denied": "갤러리 접근 실패"
+    }
+}

@@ -1,0 +1,86 @@
+{
+    "app": {
+        "title": "VibeTalk",
+        "welcome": "Selamat datang di VibeTalk",
+        "setting": "Pengaturan",
+        "yes": "Ya",
+        "no": "Tidak",
+        "save": "Simpan",
+        "cancel": "Batal",
+        "delete": "Hapus",
+        "select_language": "Pilih Bahasa"
+    },
+    "auth": {
+        "login": "Masuk",
+        "register": "Daftar",
+        "logout": "Keluar",
+        "logout_confirmation": "Apakah kamu yakin ingin keluar?",
+        "username": "Nama Pengguna",
+        "email": "Email",
+        "password": "Kata Sandi",
+        "login_subtitle": "Masuk untuk melanjutkan",
+        "register_subtitle": "Buat akunmu",
+        "username_label": "Nama Pengguna",
+        "confirm_password_label": "Konfirmasi Kata Sandi",
+        "forgot_password_prompt": "Lupa kata sandi?",
+        "dont_have_account_prompt": "Belum punya akun?",
+        "already_have_account_prompt": "Sudah punya akun?",
+        "login_with_google_button": "Masuk dengan Google",
+        "validation_email_empty": "Silakan masukkan email kamu",
+        "validation_email_invalid": "Silakan masukkan email yang valid",
+        "validation_password_empty": "Silakan masukkan kata sandi kamu",
+        "validation_password_min_length": "Kata sandi minimal 8 karakter",
+        "validation_username_empty": "Silakan masukkan nama kamu",
+        "validation_confirm_password_empty": "Silakan konfirmasi kata sandi kamu",
+        "validation_password_mismatch": "Kata sandi tidak cocok",
+        "snackbar_login_success": "Berhasil masuk",
+        "snackbar_login_failed": "Gagal masuk",
+        "snackbar_register_success": "Pendaftaran berhasil",
+        "snackbar_register_failed": "Pendaftaran gagal",
+        "snackbar_logout_success": "Berhasil keluar",
+        "snackbar_logout_failed": "Gagal keluar",
+        "user_not_found": "Gagal, silakan masuk kembali",
+        "user_not": "Pengguna tidak ditemukan"
+    },
+    "home": {
+        "add_story": "Tambah Cerita",
+        "new_conversation": "Percakapan Baru",
+        "no_conversation": "Belum ada percakapan",
+        "no_story": "Belum ada cerita",
+        "no_message": "Belum ada pesan",
+        "conversation": "Percakapan"
+    },
+    "contact": {
+        "all_members": "Semua Anggota",
+        "users_section_title": "Pengguna",
+        "error_something_went_wrong": "Terjadi kesalahan!"
+    },
+    "chat": {
+        "type_message": "Ketik pesan",
+        "chat_sent_an_image": "Mengirim gambar"
+    },
+    "profile": {
+        "profile": "Profil",
+        "language": "Bahasa",
+        "theme": "Mode Gelap",
+        "english": "Inggris",
+        "indonesian": "Indonesia",
+        "korean": "Korea",
+        "success_edit": "Profil berhasil diperbarui",
+        "failed_upload_image": "Gagal mengunggah gambar",
+        "max_image_file": "Ukuran file maksimum adalah 5MB.",
+        "failed_edit": "Gagal memperbarui profil"
+    },
+    "fetch": {
+        "failed_fetch_user": "Gagal mengambil data pengguna"
+    },
+    "conversation": {
+        "user": "Pengguna"
+    },
+    "permission": {
+        "gallery": "Galeri",
+        "camera": "Kamera",
+        "camera_denied": "Gagal mengakses kamera",
+        "gallery_denied": "Gagal mengakses galeri"
+    }
+}

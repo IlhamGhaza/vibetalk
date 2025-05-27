@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -216,7 +217,9 @@ class _ChatPageState extends State<ChatPage> {
                         final List<Message> messages = snapshot.data ?? [];
                         //if message is null
                         if (messages.isEmpty) {
-                          return const Center(child: Text('No message found'));
+                          return Center(
+                            child: Text(context.tr('home.no_message')),
+                          );
                         }
                         return ListView.builder(
                           physics: const AlwaysScrollableScrollPhysics(
@@ -270,8 +273,8 @@ class _ChatPageState extends State<ChatPage> {
                                 Expanded(
                                   child: TextField(
                                     controller: _messageController,
-                                    decoration: const InputDecoration(
-                                      hintText: "Type a message",
+                                    decoration:  InputDecoration(
+                                      hintText: "chat.type_message".tr(),
                                       border: InputBorder.none,
                                     ),
                                   ),

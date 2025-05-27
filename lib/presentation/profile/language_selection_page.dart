@@ -1,53 +1,67 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
+import '../../core/bloc/language_cubit.dart';
 
-enum AppLanguage { english, indonesian }
-
-class LanguageSelectionPage extends StatefulWidget {
+class LanguageSelectionPage extends StatelessWidget {
   const LanguageSelectionPage({super.key});
 
   @override
-  State<LanguageSelectionPage> createState() => _LanguageSelectionPageState();
-}
-
-class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
-  AppLanguage _selectedLanguage = AppLanguage.indonesian;
-
-  @override
   Widget build(BuildContext context) {
+    final languageCubit = context.watch<LanguageCubit>();
+    final currentLocale = languageCubit.state;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Pilih Bahasa')),
-      body: ListView(
-        children: [
-          RadioListTile<AppLanguage>(
-            title: const Text('English'),
-            value: AppLanguage.english,
-            groupValue: _selectedLanguage,
-            onChanged: (AppLanguage? value) {
-              if (value != null) {
-                setState(() {
-                  _selectedLanguage = value;
-                });
-
-                print('Bahasa diubah menjadi: ${value.toString()}');
-              }
-            },
-          ),
-
-          RadioListTile<AppLanguage>(
-            title: const Text('Bahasa Indonesia'),
-            value: AppLanguage.indonesian,
-            groupValue: _selectedLanguage,
-            onChanged: (AppLanguage? value) {
-              if (value != null) {
-                setState(() {
-                  _selectedLanguage = value;
-                });
-
-                print('Bahasa diubah menjadi: ${value.toString()}');
-              }
-            },
-          ),
-        ],
+      appBar: AppBar(title: Text('app.select_language'.tr())),
+      body: BlocBuilder<LanguageCubit, Locale>(
+        builder: (context, currentLocale) {
+          return ListView(
+            children: [
+              RadioListTile<String>(
+                title: Text('english'.tr()),
+                value: 'en',
+                groupValue: currentLocale.languageCode,
+                onChanged: (String? value) {
+                  if (value != null) {
+                    context.read<LanguageCubit>().changeLanguage(
+                      context,
+                      value,
+                    );
+                    Navigator.pop(context);
+                  }
+                },
+              ),
+              RadioListTile<String>(
+                title: Text('indonesian'.tr()),
+                value: 'id',
+                groupValue: currentLocale.languageCode,
+                onChanged: (String? value) {
+                  if (value != null) {
+                    context.read<LanguageCubit>().changeLanguage(
+                      context,
+                      value,
+                    );
+                    Navigator.pop(context);
+                  }
+                },
+              ),
+              RadioListTile<String>(
+                title: Text('korean'.tr()),
+                value: 'ko',
+                groupValue: currentLocale.languageCode,
+                onChanged: (String? value) {
+                  if (value != null) {
+                    context.read<LanguageCubit>().changeLanguage(
+                      context,
+                      value,
+                    );
+                    Navigator.pop(context);
+                  }
+                },
+              ),
+            ],
+          );
+        },
       ),
     );
   }

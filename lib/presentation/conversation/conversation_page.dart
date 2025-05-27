@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -66,8 +67,8 @@ class _ConversationPageState extends State<ConversationPage> {
                                 color: Colors.white,
                               ),
                             ),
-                            const Text(
-                              "VibeTalk",
+                            Text(
+                              context.tr('app.title'),
                               style: TextStyle(
                                 fontSize: 24.0,
                                 fontWeight: FontWeight.bold,
@@ -143,8 +144,8 @@ class _ConversationPageState extends State<ConversationPage> {
                                       ),
                                     ),
                                     const SpaceHeight(8),
-                                    const Text(
-                                      'Add Story',
+                                    Text(
+                                      context.tr('home.add_story'),
                                       style: TextStyle(
                                         fontSize: 14.0,
                                         color: Colors.white,
@@ -203,8 +204,10 @@ class _ConversationPageState extends State<ConversationPage> {
                               : null,
                           builder: (context, snapshot) {
                             if (auth.currentUser == null) {
-                              return const Center(
-                                child: Text('User not authenticated'),
+                              return Center(
+                                child: Text(
+                                  context.tr('auth.user_not_found'),
+                                ),
                               );
                             }
 
@@ -234,8 +237,7 @@ class _ConversationPageState extends State<ConversationPage> {
                                       color: Colors.grey.withOpacity(0.5),
                                     ),
                                     const SpaceHeight(16),
-                                    Text(
-                                      'No conversations yet',
+                                   Text(context.tr('home.no_conversation'),
                                       style: TextStyle(
                                         fontSize: 18,
                                         color: Colors.grey.withOpacity(0.7),
@@ -243,8 +245,7 @@ class _ConversationPageState extends State<ConversationPage> {
                                       ),
                                     ),
                                     const SpaceHeight(8),
-                                    Text(
-                                      'Start a new conversation!',
+                                   Text(context.tr('home.new_conversation'),
                                       style: TextStyle(
                                         fontSize: 14,
                                         color: Colors.grey.withOpacity(0.5),
@@ -294,8 +295,10 @@ class _ConversationPageState extends State<ConversationPage> {
 
                                     final UserModel? user = userSnapshot.data;
                                     if (user == null) {
-                                      return const ListTile(
-                                        title: Text('User not found'),
+                                      return ListTile(
+                                        title: Text(
+                                          context.tr('auth.user_not'),
+                                        ),
                                       );
                                     }
 

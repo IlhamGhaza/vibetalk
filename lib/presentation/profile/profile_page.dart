@@ -1,10 +1,12 @@
 import 'dart:developer';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vibetalk/core/utils/snackbar_utils.dart';
 import 'package:vibetalk/presentation/profile/edit_profile_page.dart';
+import '../../core/bloc/language_cubit.dart';
 import '../../core/bloc/theme_cubit.dart';
 import '../../core/theme.dart';
 import '../../data/datasources/firebase_datasource.dart';
@@ -75,7 +77,7 @@ class _ProfilePageState extends State<ProfilePage> {
         final theme = isDarkMode ? AppTheme.darkTheme : AppTheme.lightTheme;
         return Scaffold(
           backgroundColor: theme.scaffoldBackgroundColor,
-          appBar: AppBar(title: const Text('Profil')),
+          appBar: AppBar(title: Text('profile.profile'.tr())),
           body: ListView(
             padding: const EdgeInsets.all(16.0),
             children: [
@@ -161,7 +163,7 @@ class _ProfilePageState extends State<ProfilePage> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 12.0),
                 child: Text(
-                  'Pengaturan',
+                  context.tr('app.setting'),
 
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
@@ -187,7 +189,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
                   title: Text(
-                    'Dark Mode',
+                    context.tr('profile.theme'),
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   trailing: BlocBuilder<ThemeCubit, ThemeMode>(
@@ -206,19 +208,38 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
 
-              ListTile(
-                leading: Icon(
-                  Icons.language,
-                  color: Theme.of(context).iconTheme.color,
-                ),
-                title: const Text('Bahasa'),
-                trailing: const Text('Indonesia'),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const LanguageSelectionPage(),
+              BlocBuilder<LanguageCubit, Locale>(
+                builder: (context, currentLocale) {
+                  String currentLanguageName;
+                  switch (currentLocale.languageCode) {
+                    case 'en':
+                      currentLanguageName = 'profile.english'.tr();
+                      break;
+                    case 'id':
+                      currentLanguageName = 'profile.indonesian'.tr();
+                      break;
+                    case 'ko':
+                      currentLanguageName = 'profile.korean'.tr();
+                      break;
+                    default:
+                      currentLanguageName = 'profile.indonesian'
+                          .tr(); // Default or fallback
+                  }
+                  return ListTile(
+                    leading: Icon(
+                      Icons.language,
+                      color: Theme.of(context).iconTheme.color,
                     ),
+                    title: Text('profile.language'.tr()),
+                    trailing: Text(currentLanguageName),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LanguageSelectionPage(),
+                        ),
+                      );
+                    },
                   );
                 },
               ),
@@ -231,7 +252,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   color: Theme.of(context).colorScheme.error,
                 ),
                 title: Text(
-                  'Keluar',
+                  context.tr('auth.logout'),
                   style: TextStyle(color: Theme.of(context).colorScheme.error),
                 ),
                 onTap: () {
@@ -239,20 +260,20 @@ class _ProfilePageState extends State<ProfilePage> {
                     context: context,
                     builder: (context) {
                       return AlertDialog(
-                        title: const Text('Logout'),
-                        content: const Text('Are you sure you want to logout?'),
+                        title: Text(context.tr('auth.logout')),
+                        content: Text(context.tr('auth.logout_confirmation')),
                         actions: [
                           TextButton(
                             onPressed: () {
                               Navigator.pop(context);
                             },
-                            child: const Text('Cancel'),
+                            child: Text(context.tr('app.cancel')),
                           ),
                           InkWell(
                             onTap: () {
                               _auth.signOut();
                               SnackbarUtils(
-                                text: 'Logout Success',
+                                text: 'auth.snackbar_logout_success'.tr(),
                                 backgroundColor: Colors.green,
                               ).showSuccessSnackBar(context);
                               Navigator.pushReplacement(
@@ -272,7 +293,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
-                                'Logout',
+                                context.tr('auth.logout'),
                                 style: TextStyle(color: Colors.white),
                               ),
                             ),

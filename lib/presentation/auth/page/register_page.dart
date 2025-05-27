@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:easy_localization/easy_localization.dart'; // Contoh import untuk lokalisasi
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vibetalk/core/utils/snackbar_utils.dart';
@@ -67,7 +68,7 @@ class _RegisterPageState extends State<RegisterPage> {
             });
         debugPrint('Register success, $authResult');
         SnackbarUtils(
-          text: 'Register success',
+          text: context.tr('auth.snackbar_register_success'),
           backgroundColor: Colors.green,
         ).showSuccessSnackBar(context);
         Navigator.pushReplacement(
@@ -75,8 +76,8 @@ class _RegisterPageState extends State<RegisterPage> {
           MaterialPageRoute(builder: (context) => const NavBar()),
         );
       } catch (e) {
-        SnackbarUtils(text: 'Register failed', backgroundColor: Colors.red);
-        debugPrint(e.toString());
+        SnackbarUtils(text: context.tr('auth.snackbar_register_failed'), backgroundColor: Colors.red).showErrorSnackBar(context);
+        debugPrint(e.toString()); // Tetap gunakan debugPrint untuk error development
       }
     }
   }
@@ -110,14 +111,14 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                       const SizedBox(height: 24),
                       Text(
-                        'Register Account',
+                        context.tr('auth.register'),
                         style: theme.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Register your account',
+                        context.tr('auth.register_subtitle'),
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: DefaultColors.greyText,
                         ),
@@ -125,12 +126,12 @@ class _RegisterPageState extends State<RegisterPage> {
                       const SizedBox(height: 32),
                       AuthTextField(
                         suffixIcon: const Icon(Icons.email),
-                        label: 'Username',
+                        label: context.tr('auth.username_label'),
                         textInputAction: TextInputAction.next,
                         controller: _nameController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter your name';
+                            return context.tr('auth.validation_username_empty');
                           }
                           return null;
                         },
@@ -138,25 +139,25 @@ class _RegisterPageState extends State<RegisterPage> {
                       const SizedBox(height: 16),
                       AuthTextField(
                         suffixIcon: const Icon(Icons.email),
-                        label: 'Email',
+                        label: context.tr('auth.email'),
                         keyboardType: TextInputType.emailAddress,
                         textInputAction: TextInputAction.next,
                         controller: _emailController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter your email';
+                            return context.tr('auth.validation_email_empty');
                           }
                           if (!RegExp(
                             r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
                           ).hasMatch(value)) {
-                            return 'Please enter a valid email';
+                            return context.tr('auth.validation_email_invalid');
                           }
                           return null;
                         },
                       ),
                       const SizedBox(height: 16),
                       AuthTextField(
-                        label: 'Password',
+                        label: context.tr('auth.password'),
                         controller: _passwordController,
                         textInputAction: TextInputAction.next,
                         obscureText: _obscurePassword,
@@ -170,10 +171,10 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter your password';
+                            return context.tr('auth.validation_password_empty');
                           }
                           if (value.length < 8) {
-                            return 'Password must be at least 8 characters';
+                            return context.tr('auth.validation_password_min_length');
                           }
                           // if (!RegExp(
                           //   r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$',
@@ -185,7 +186,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                       const SizedBox(height: 16),
                       AuthTextField(
-                        label: 'Konfirmasi Password',
+                        label: context.tr('auth.confirm_password_label'),
                         textInputAction: TextInputAction.done,
                         controller: _confirmPasswordController,
                         obscureText: _obscureConfirmPassword,
@@ -199,17 +200,17 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please confirm your password';
+                            return context.tr('auth.validation_confirm_password_empty');
                           }
                           if (value != _passwordController.text) {
-                            return 'Passwords do not match';
+                            return context.tr('auth.validation_password_mismatch');
                           }
                           return null;
                         },
                       ),
                       const SizedBox(height: 32),
                       AuthButton(
-                        text: 'Register',
+                        text: context.tr('auth.register'),
                         onPressed: _handleRegister,
                         isOutlined: false,
                       ),
@@ -218,7 +219,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'already have an account?',
+                            context.tr('auth.already_have_account_prompt'),
                             style: theme.textTheme.bodyMedium?.copyWith(
                               color: isDarkMode
                                   ? DefaultColors.whiteText
@@ -235,7 +236,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               );
                             },
                             child: Text(
-                              'Login',
+                              context.tr('auth.login'),
                               style: theme.textTheme.bodyMedium?.copyWith(
                                 color: theme.primaryColor,
                               ),
@@ -251,7 +252,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           width: 24.0,
                         ),
                         label: Text(
-                          'Login with Google',
+                          context.tr('auth.login_with_google_button'),
                           style: TextStyle(
                             color: isDarkMode ? Colors.white : Colors.black87,
                           ),

@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vibetalk/core/extensions/build_context_ext.dart';
 
@@ -63,8 +64,8 @@ class _ContactPageState extends State<ContactPage> {
                               color: Colors.white,
                             ),
                           ),
-                          const Text(
-                            "All Members",
+                          Text(
+                            context.tr('contact.all_members'),
                             style: TextStyle(
                               fontSize: 20.0,
                               fontWeight: FontWeight.bold,
@@ -117,8 +118,8 @@ class _ContactPageState extends State<ContactPage> {
                           ),
                         ),
                         const SpaceHeight(20),
-                        const Text(
-                          "Users",
+                        Text(
+                          context.tr('contact.users_section_title'),
                           style: TextStyle(
                             fontSize: 16.0,
                             fontWeight: FontWeight.bold,
@@ -135,8 +136,8 @@ class _ContactPageState extends State<ContactPage> {
                               );
                             }
                             if (snapshot.hasError) {
-                              return const Center(
-                                child: Text('Something went wrong!'),
+                              return Center(
+                                child: Text(context.tr('contact.error_something_went_wrong')),
                               );
                             }
                             return ListView.separated(

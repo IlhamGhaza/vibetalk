@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart'; // Contoh import untuk lokalisasi
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/bloc/theme_cubit.dart';
 import '../../../core/theme.dart';
@@ -46,7 +47,7 @@ class _LoginPageState extends State<LoginPage> {
           password: _passwordController.text,
         );
         SnackbarUtils(
-          text: 'Login success',
+          text: context.tr('auth.snackbar_login_success'),
           backgroundColor: Colors.green,
         ).showSuccessSnackBar(context);
         Navigator.pushReplacement(
@@ -54,7 +55,7 @@ class _LoginPageState extends State<LoginPage> {
           MaterialPageRoute(builder: (context) => const NavBar()),
         );
       } catch (e) {
-        SnackbarUtils(text: 'Login failed', backgroundColor: Colors.red);
+        SnackbarUtils(text: context.tr('auth.snackbar_login_failed'), backgroundColor: Colors.red).showErrorSnackBar(context);
         debugPrint(e.toString());
       }
     }
@@ -90,14 +91,14 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       const SizedBox(height: 24),
                       Text(
-                        'Login',
+                        context.tr('auth.login'),
                         style: theme.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Login to continue',
+                        context.tr('auth.login_subtitle'),
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: DefaultColors.greyText,
                         ),
@@ -106,17 +107,17 @@ class _LoginPageState extends State<LoginPage> {
                       AuthTextField(
                         textInputAction: TextInputAction.next,
                         suffixIcon: const Icon(Icons.email),
-                        label: 'Email',
+                        label: context.tr('auth.email'),
                         keyboardType: TextInputType.emailAddress,
                         controller: _emailController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter your email';
+                            return context.tr('auth.validation_email_empty');
                           }
                           if (!RegExp(
                             r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
                           ).hasMatch(value)) {
-                            return 'Please enter a valid email';
+                            return context.tr('auth.validation_email_invalid');
                           }
                           return null;
                         },
@@ -124,7 +125,7 @@ class _LoginPageState extends State<LoginPage> {
                       const SizedBox(height: 16),
                       AuthTextField(
                         textInputAction: TextInputAction.done,
-                        label: 'Password',
+                        label: context.tr('auth.password'),
                         controller: _passwordController,
                         keyboardType: TextInputType.visiblePassword,
                         obscureText: _obscurePassword,
@@ -138,10 +139,10 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter your password';
+                            return context.tr('auth.validation_password_empty');
                           }
                           if (value.length < 8) {
-                            return 'Password must be at least 8 characters';
+                            return context.tr('auth.validation_password_min_length');
                           }
 
                           return null;
@@ -160,7 +161,7 @@ class _LoginPageState extends State<LoginPage> {
                             );
                           },
                           child: Text(
-                            'Forgot Password?',
+                            context.tr('auth.forgot_password_prompt'),
                             style: theme.textTheme.bodyMedium?.copyWith(
                               color: theme.primaryColor,
                               fontWeight: FontWeight.w600,
@@ -169,13 +170,13 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       const SizedBox(height: 24),
-                      AuthButton(text: 'Login', onPressed: _handleLogin),
+                      AuthButton(text: context.tr('auth.login'), onPressed: _handleLogin),
                       const SizedBox(height: 24),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'Don\'t have an account?',
+                            context.tr('auth.dont_have_account_prompt'),
                             style: theme.textTheme.bodyMedium?.copyWith(
                               color: isDarkMode
                                   ? DefaultColors.whiteText
@@ -192,7 +193,7 @@ class _LoginPageState extends State<LoginPage> {
                               );
                             },
                             child: Text(
-                              'Register',
+                              context.tr('auth.register'),
                               style: theme.textTheme.bodyMedium?.copyWith(
                                 color: theme.primaryColor,
                               ),
@@ -208,7 +209,7 @@ class _LoginPageState extends State<LoginPage> {
                           width: 24.0,
                         ),
                         label: Text(
-                          'Login with Google',
+                          context.tr('auth.login_with_google_button'),
                           style: TextStyle(
                             color: isDarkMode ? Colors.white : Colors.black87,
                           ),
