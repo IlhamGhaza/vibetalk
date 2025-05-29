@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart'; // Contoh import untuk lokalisasi
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/bloc/theme_cubit.dart';
 import '../../../core/theme.dart';
@@ -55,7 +55,10 @@ class _LoginPageState extends State<LoginPage> {
           MaterialPageRoute(builder: (context) => const NavBar()),
         );
       } catch (e) {
-        SnackbarUtils(text: context.tr('auth.snackbar_login_failed'), backgroundColor: Colors.red).showErrorSnackBar(context);
+        SnackbarUtils(
+          text: context.tr('auth.snackbar_login_failed'),
+          backgroundColor: Colors.red,
+        ).showErrorSnackBar(context);
         debugPrint(e.toString());
       }
     }
@@ -68,25 +71,31 @@ class _LoginPageState extends State<LoginPage> {
         final isDarkMode = themeMode == ThemeMode.dark;
         final theme = isDarkMode ? AppTheme.darkTheme : AppTheme.lightTheme;
         return Scaffold(
+          backgroundColor: theme.scaffoldBackgroundColor,
           body: SafeArea(
             child: SingleChildScrollView(
               child: Padding(
-                padding: EdgeInsets.all(20),
+                padding: const EdgeInsets.all(20),
                 child: Form(
                   key: _formKey,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
-
                     children: [
                       const SizedBox(height: 28),
-                      const CircleAvatar(
-                        radius: 50,
-                        backgroundColor: DefaultColors.primaryColor,
-                        child: Icon(
-                          Icons.message,
-                          size: 60,
-                          color: Colors.white,
+                     Container(
+                        width: 100,
+                        height: 100,
+                        decoration: BoxDecoration(
+                          color: DefaultColors.primaryColor,
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Image.asset(
+                            'assets/images/logo.png',
+                            fit: BoxFit.contain,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 24),
@@ -94,6 +103,9 @@ class _LoginPageState extends State<LoginPage> {
                         context.tr('auth.login'),
                         style: theme.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
+                          color: isDarkMode
+                              ? DefaultColors.whiteText
+                              : DefaultColors.lightTextColor,
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -142,13 +154,13 @@ class _LoginPageState extends State<LoginPage> {
                             return context.tr('auth.validation_password_empty');
                           }
                           if (value.length < 8) {
-                            return context.tr('auth.validation_password_min_length');
+                            return context.tr(
+                              'auth.validation_password_min_length',
+                            );
                           }
-
                           return null;
                         },
                       ),
-
                       Align(
                         alignment: Alignment.centerRight,
                         child: TextButton(
@@ -163,14 +175,17 @@ class _LoginPageState extends State<LoginPage> {
                           child: Text(
                             context.tr('auth.forgot_password_prompt'),
                             style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.primaryColor,
+                              color: DefaultColors.primaryColor,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),
                       ),
                       const SizedBox(height: 24),
-                      AuthButton(text: context.tr('auth.login'), onPressed: _handleLogin),
+                      AuthButton(
+                        text: context.tr('auth.login'),
+                        onPressed: _handleLogin,
+                      ),
                       const SizedBox(height: 24),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -195,7 +210,8 @@ class _LoginPageState extends State<LoginPage> {
                             child: Text(
                               context.tr('auth.register'),
                               style: theme.textTheme.bodyMedium?.copyWith(
-                                color: theme.primaryColor,
+                                color: DefaultColors.primaryColor,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
                           ),
@@ -211,23 +227,26 @@ class _LoginPageState extends State<LoginPage> {
                         label: Text(
                           context.tr('auth.login_with_google_button'),
                           style: TextStyle(
-                            color: isDarkMode ? Colors.white : Colors.black87,
+                            color: isDarkMode
+                                ? DefaultColors.whiteText
+                                : DefaultColors.lightTextColor,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: isDarkMode
-                              ? Colors.grey[700]
-                              : Colors.white,
+                              ? DefaultColors.textInputBackground
+                              : DefaultColors.lightInputBackground,
                           minimumSize: const Size(double.infinity, 50),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0),
+                            borderRadius: BorderRadius.circular(12.0),
                             side: BorderSide(
                               color: isDarkMode
-                                  ? Colors.grey[600]!
-                                  : Colors.grey[300]!,
+                                  ? Colors.transparent
+                                  : DefaultColors.greyText.withOpacity(0.3),
                             ),
                           ),
-                          elevation: 2,
+                          elevation: 0,
                         ),
                         onPressed: () {},
                       ),

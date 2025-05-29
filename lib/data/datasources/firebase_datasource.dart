@@ -21,13 +21,18 @@ class FirebaseDatasource {
   static final FirebaseDatasource instance = FirebaseDatasource._init();
 
   Future<bool> isUserExist(String id) async {
-    final snap =
-        await FirebaseFirestore.instance.collection('users').doc(id).get();
+    final snap = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(id)
+        .get();
     return snap.exists;
   }
 
   Future<UserModel?> getUser(String userId) async {
-    final doc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+    final doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .get();
     if (doc.exists) {
       return UserModel.fromDocumentSnapshot(doc);
     }
@@ -42,10 +47,9 @@ class FirebaseDatasource {
   }
 
   Stream<List<UserModel>> allUser() {
-    return FirebaseFirestore.instance
-        .collection('users')
-        .snapshots()
-        .map((snapShot) {
+    return FirebaseFirestore.instance.collection('users').snapshots().map((
+      snapShot,
+    ) {
       List<UserModel> rs = [];
       for (var element in snapShot.docs) {
         rs.add(UserModel.fromDocumentSnapshot(element));
@@ -60,12 +64,12 @@ class FirebaseDatasource {
         .where('userName', isEqualTo: username)
         .snapshots()
         .map((snapShot) {
-      List<UserModel> rs = [];
-      for (var element in snapShot.docs) {
-        rs.add(UserModel.fromDocumentSnapshot(element));
-      }
-      return rs;
-    });
+          List<UserModel> rs = [];
+          for (var element in snapShot.docs) {
+            rs.add(UserModel.fromDocumentSnapshot(element));
+          }
+          return rs;
+        });
   }
 
   // Future<Channel?> getChannel(String channelId) async {
@@ -82,7 +86,9 @@ class FirebaseDatasource {
   // }
 
   Future<void> updateChannel(
-      String channelId, Map<String, dynamic> data) async {
+    String channelId,
+    Map<String, dynamic> data,
+  ) async {
     await FirebaseFirestore.instance
         .collection('channels')
         .doc(channelId)
@@ -100,14 +106,32 @@ class FirebaseDatasource {
         .collection('messages')
         .where('channelId', isEqualTo: channelId)
         .orderBy('sendAt', descending: true)
+        .limit(20)
         .snapshots()
         .map((querySnapshot) {
-      List<Message> rs = [];
-      for (var element in querySnapshot.docs) {
-        rs.add(Message.fromDocumentSnapshot(element));
-      }
-      return rs;
-    });
+          List<Message> rs = [];
+          for (var element in querySnapshot.docs) {
+            rs.add(Message.fromDocumentSnapshot(element));
+          }
+          return rs;
+        });
+  }
+
+  Future<List<Message>> loadMoreMessages(
+    String channelId,
+    DocumentSnapshot lastDocument,
+  ) async {
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection('messages')
+        .where('channelId', isEqualTo: channelId)
+        .orderBy('sendAt', descending: true)
+        .startAfterDocument(lastDocument)
+        .limit(20)
+        .get();
+
+    return querySnapshot.docs
+        .map((doc) => Message.fromDocumentSnapshot(doc))
+        .toList();
   }
 
   Stream<List<Channel>> channelStream(String userId) {
@@ -117,12 +141,12 @@ class FirebaseDatasource {
         .orderBy('lastTime', descending: true)
         .snapshots()
         .map((querySnapshot) {
-      List<Channel> rs = [];
-      for (var element in querySnapshot.docs) {
-        rs.add(Channel.fromDocumentSnapshot(element));
-      }
-      return rs;
-    });
+          List<Channel> rs = [];
+          for (var element in querySnapshot.docs) {
+            rs.add(Channel.fromDocumentSnapshot(element));
+          }
+          return rs;
+        });
   }
 
   Future<Channel?> getChannel(String channelId) async {
@@ -131,18 +155,17 @@ class FirebaseDatasource {
         .doc(channelId)
         .get()
         .then((chanel) {
-      if (chanel.exists) {
-        return Channel.fromDocumentSnapshot(chanel);
-      }
-      return null;
-    });
+          if (chanel.exists) {
+            return Channel.fromDocumentSnapshot(chanel);
+          }
+          return null;
+        });
   }
 
   Stream<List<Channel>> getAllChannels() {
-    return FirebaseFirestore.instance
-        .collection('channels')
-        .snapshots()
-        .map((querySnapshot) {
+    return FirebaseFirestore.instance.collection('channels').snapshots().map((
+      querySnapshot,
+    ) {
       return querySnapshot.docs.map((doc) {
         return Channel.fromDocumentSnapshot(doc);
       }).toList();
@@ -177,10 +200,10 @@ Stream<List<Channel>> channelStream(String userId) {
       .orderBy('lastTime', descending: true)
       .snapshots()
       .map((querySnapshot) {
-    List<Channel> rs = [];
-    for (var element in querySnapshot.docs) {
-      rs.add(Channel.fromDocumentSnapshot(element));
-    }
-    return rs;
-  });
+        List<Channel> rs = [];
+        for (var element in querySnapshot.docs) {
+          rs.add(Channel.fromDocumentSnapshot(element));
+        }
+        return rs;
+      });
 }

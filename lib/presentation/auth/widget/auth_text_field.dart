@@ -32,12 +32,11 @@ class AuthTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final theme = Theme.of(context);
-
     return BlocBuilder<ThemeCubit, ThemeMode>(
       builder: (context, themeMode) {
         final isDarkMode = themeMode == ThemeMode.dark;
         final theme = isDarkMode ? AppTheme.darkTheme : AppTheme.lightTheme;
+
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -47,8 +46,12 @@ class AuthTextField extends StatelessWidget {
                     label ?? '',
                     style: theme.textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.bold,
+                      color: isDarkMode
+                          ? DefaultColors.whiteText
+                          : DefaultColors.lightTextColor,
                     ),
                   ),
+            const SizedBox(height: 8),
             TextFormField(
               textInputAction: textInputAction,
               enabled: enabled,
@@ -56,37 +59,81 @@ class AuthTextField extends StatelessWidget {
               obscureText: obscureText,
               keyboardType: keyboardType,
               validator: validator,
+              style: TextStyle(
+                color: isDarkMode
+                    ? DefaultColors.whiteText
+                    : DefaultColors.lightTextColor,
+              ),
               decoration: InputDecoration(
                 hintText: hint,
-                prefixIcon: prefixIcon,
-                suffixIcon: suffixIcon,
+                hintStyle: TextStyle(color: DefaultColors.greyText),
+                prefixIcon: prefixIcon != null
+                    ? IconTheme(
+                        data: IconThemeData(
+                          color: isDarkMode
+                              ? DefaultColors.textInputIcon
+                              : DefaultColors.greyText,
+                        ),
+                        child: prefixIcon!,
+                      )
+                    : null,
+                suffixIcon: suffixIcon != null
+                    ? IconTheme(
+                        data: IconThemeData(
+                          color: isDarkMode
+                              ? DefaultColors.textInputIcon
+                              : DefaultColors.greyText,
+                        ),
+                        child: suffixIcon!,
+                      )
+                    : null,
                 filled: true,
                 fillColor: enabled
-                    ? theme.colorScheme.surface
-                    : Colors.grey[200],
+                    ? (isDarkMode
+                          ? DefaultColors.textInputBackground
+                          : DefaultColors.lightInputBackground)
+                    : (isDarkMode ? Colors.grey[800] : Colors.grey[200]),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Colors.black),
+                  borderSide: BorderSide(
+                    color: isDarkMode
+                        ? Colors.transparent
+                        : DefaultColors.greyText.withOpacity(0.3),
+                  ),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide(
-                    color: Colors.black.withValues(alpha: 0.2),
+                    color: isDarkMode
+                        ? Colors.transparent
+                        : DefaultColors.greyText.withOpacity(0.3),
                   ),
                 ),
                 disabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Colors.grey.withOpacity(0.3)),
+                  borderSide: BorderSide(
+                    color: DefaultColors.greyText.withOpacity(0.2),
+                  ),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Colors.white, width: 2),
+                  borderSide: BorderSide(
+                    color: DefaultColors.primaryColor,
+                    width: 2,
+                  ),
                 ),
                 errorBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide(
                     color: theme.colorScheme.error,
                     width: 1,
+                  ),
+                ),
+                focusedErrorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(
+                    color: theme.colorScheme.error,
+                    width: 2,
                   ),
                 ),
                 contentPadding: const EdgeInsets.symmetric(

@@ -33,10 +33,76 @@ class _ChatPageState extends State<ChatPage> {
   final TextEditingController _messageController = TextEditingController();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   File? imageFile;
+  final ScrollController _scrollController = ScrollController();
+  bool _isLoadingMore = false;
+  DocumentSnapshot? _lastDocument;
+  List<Message> _messages = [];
 
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(_scrollListener);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_scrollListener);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollListener() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent * 0.8) {
+      _loadMoreMessages();
+    }
+  }
+
+  Future<void> _initializeLastDocument() async {
+    if (_messages.isNotEmpty && _lastDocument == null) {
+      try {
+        _lastDocument = await _firestore
+            .collection('messages')
+            .doc(_messages.last.id)
+            .get();
+      } catch (e) {
+        debugPrint('Error initializing last document: $e');
+      }
+    }
+  }
+
+  Future<void> _loadMoreMessages() async {
+    if (_isLoadingMore || _lastDocument == null) return;
+
+    setState(() {
+      _isLoadingMore = true;
+    });
+
+    try {
+      final moreMessages = await FirebaseDatasource.instance.loadMoreMessages(
+        channelId(widget.partnerUser.id, currentUser!.uid),
+        _lastDocument!,
+      );
+
+      if (moreMessages.isNotEmpty) {
+        // Fix: Await the Future and get the actual DocumentSnapshot
+        final lastDocSnapshot = await _firestore
+            .collection('messages')
+            .doc(moreMessages.last.id)
+            .get();
+
+        setState(() {
+          _messages.addAll(moreMessages);
+          _lastDocument = lastDocSnapshot;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error loading more messages: $e');
+    } finally {
+      setState(() {
+        _isLoadingMore = false;
+      });
+    }
   }
 
   void sendMessage() async {
@@ -353,7 +419,17 @@ class _ChatPageState extends State<ChatPage> {
                             ),
                           );
                         }
-                        final List<Message> messages = snapshot.data ?? [];
+
+                        if (snapshot.hasData) {
+                          _messages = snapshot.data!;
+                          // Fix: Remove this problematic line and handle _lastDocument properly
+                          if (_messages.isNotEmpty && _lastDocument == null) {
+                            // Initialize _lastDocument asynchronously if needed
+                            _initializeLastDocument();
+                          }
+                        }
+
+                        final List<Message> messages = _messages;
                         if (messages.isEmpty) {
                           return Center(
                             child: Text(
@@ -362,103 +438,131 @@ class _ChatPageState extends State<ChatPage> {
                             ),
                           );
                         }
-                        return ListView.builder(
-                          physics: const AlwaysScrollableScrollPhysics(
-                            parent: BouncingScrollPhysics(),
-                          ),
-                          reverse: true,
-                          padding: const EdgeInsets.all(10),
-                          itemCount: messages.length,
-                          itemBuilder: (context, index) {
-                            final message = messages[index];
-                            return message.type == 'image'
-                                ? ChatBubbleImage(
-                                    url: message.textMessage,
-                                    direction:
-                                        message.senderId == currentUser!.uid
-                                        ? Direction.right
-                                        : Direction.left,
-                                  )
-                                : ChatBubble(
-                                    partnerUser: widget.partnerUser,
-                                    direction:
-                                        message.senderId == currentUser!.uid
-                                        ? Direction.right
-                                        : Direction.left,
-                                    message: message.textMessage,
-                                    type: BubbleType.alone,
+
+                        return Stack(
+                          children: [
+                            ListView.builder(
+                              controller: _scrollController,
+                              physics: const AlwaysScrollableScrollPhysics(
+                                parent: BouncingScrollPhysics(),
+                              ),
+                              reverse: true,
+                              padding: const EdgeInsets.all(10),
+                              itemCount:
+                                  messages.length + (_isLoadingMore ? 1 : 0),
+                              itemBuilder: (context, index) {
+                                if (index == messages.length) {
+                                  return Center(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: CircularProgressIndicator(
+                                        color: DefaultColors.primaryColor,
+                                      ),
+                                    ),
                                   );
-                          },
+                                }
+
+                                final message = messages[index];
+                                return message.type == 'image'
+                                    ? ChatBubbleImage(
+                                        url: message.textMessage,
+                                        direction:
+                                            message.senderId == currentUser!.uid
+                                            ? Direction.right
+                                            : Direction.left,
+                                      )
+                                    : ChatBubble(
+                                        partnerUser: widget.partnerUser,
+                                        direction:
+                                            message.senderId == currentUser!.uid
+                                            ? Direction.right
+                                            : Direction.left,
+                                        message: message.textMessage,
+                                        type: BubbleType.alone,
+                                      );
+                              },
+                            ),
+                          ],
                         );
                       },
                     ),
                   ),
                   Container(
-                    width: double.infinity,
-                    height: 80.0,
                     padding: const EdgeInsets.all(16.0),
                     child: Row(
                       children: [
                         Expanded(
                           child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16.0,
-                            ),
                             decoration: BoxDecoration(
                               color: isDarkMode
                                   ? DefaultColors.darkInputBackground
-                                  : DefaultColors.lightInputBackground,
-                              borderRadius: BorderRadius.circular(16.0),
+                                  : Colors.white,
+                              borderRadius: BorderRadius.circular(24.0),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.05),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
                             ),
                             child: Row(
                               children: [
-                                const SpaceWidth(16),
+                                const SizedBox(width: 16),
                                 Expanded(
                                   child: TextField(
                                     controller: _messageController,
-                                    style: theme.textTheme.bodyMedium,
+                                    style: TextStyle(
+                                      color: Colors.white
+                                    ),
+                                    cursorColor: DefaultColors.primaryColor,
                                     decoration: InputDecoration(
                                       hintText: "chat.type_message".tr(),
-                                      hintStyle: theme.textTheme.labelSmall,
+                                      // hintStyle: theme.textTheme.labelSmall,
                                       border: InputBorder.none,
+                                      isDense: true,
                                     ),
                                   ),
                                 ),
-                                GestureDetector(
-                                  onTap: () {
-                                    log(_messageController.text);
-                                    sendMessage();
-                                  },
-                                  child: const Icon(
-                                    Icons.send,
-                                    color: DefaultColors.primaryColor,
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8.0,
+                                  ),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      log(_messageController.text);
+                                      sendMessage();
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: DefaultColors.primaryColor,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      padding: const EdgeInsets.all(10),
+                                      child: const Icon(
+                                        Icons.send,
+                                        size: 20,
+                                        color: Colors.white,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ],
                             ),
                           ),
                         ),
-                        const SpaceWidth(16),
-                        GestureDetector(
-                          onTap: () {
-                            _sendMessageImage(true);
-                          },
-                          child: Icon(
-                            Icons.camera_alt,
-                            color: theme.iconTheme.color,
-                          ),
+                        const SizedBox(width: 12),
+                        _buildIconButton(
+                          Icons.camera_alt,
+                          () => _sendMessageImage(true),
+                          theme,
                         ),
-                        const SpaceWidth(16),
-                        GestureDetector(
-                          onTap: () {
-                            _sendMessageImage(false);
-                          },
-                          child: Icon(
-                            Icons.photo_library,
-                            color: theme.iconTheme.color,
-                          ),
+                        const SizedBox(width: 12),
+                        _buildIconButton(
+                          Icons.photo_library,
+                          () => _sendMessageImage(false),
+                          theme,
                         ),
-                        const SpaceWidth(16),
                       ],
                     ),
                   ),
@@ -468,6 +572,21 @@ class _ChatPageState extends State<ChatPage> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildIconButton(IconData icon, VoidCallback onTap, ThemeData theme) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: theme.scaffoldBackgroundColor,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: theme.iconTheme.color!.withOpacity(0.2)),
+        ),
+        padding: const EdgeInsets.all(8.0),
+        child: Icon(icon, color: theme.iconTheme.color, size: 20),
+      ),
     );
   }
 }

@@ -30,12 +30,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         final isDarkMode = themeMode == ThemeMode.dark;
         final theme = isDarkMode ? AppTheme.darkTheme : AppTheme.lightTheme;
         return Scaffold(
-          backgroundColor: isDarkMode ? DefaultColors.darkScaffoldBackground : DefaultColors.lightScaffoldBackground,
+          backgroundColor: theme.scaffoldBackgroundColor,
           appBar: AppBar(
             backgroundColor: Colors.transparent,
             elevation: 0,
             leading: IconButton(
-              icon: Icon(Icons.arrow_back, color: Colors.blue),
+              icon: Icon(Icons.arrow_back, color: DefaultColors.primaryColor),
               onPressed: () => Navigator.of(context).pop(),
             ),
           ),
@@ -48,36 +48,43 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const Spacer(),
-                    const Center(
-                      child: CircleAvatar(
-                        radius: 50,
-                        backgroundColor: DefaultColors.primaryColor,
-                        child: Icon(
-                          Icons.person,
-                          size: 60,
-                          color: Colors.white,
+                    Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        color: DefaultColors.primaryColor,
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Image.asset(
+                          'assets/images/logo.png',
+                          fit: BoxFit.contain,
                         ),
                       ),
                     ),
                     const SizedBox(height: 40),
                     Text(
                       'Lupa Password',
-                      style: TextStyle(
-                        fontSize: 24,
+                      style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: Colors.blue,
+                        color: isDarkMode
+                            ? DefaultColors.whiteText
+                            : DefaultColors.lightTextColor,
                       ),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16),
-                    const Text(
+                    Text(
                       'Silahkan masukan email yang terdaftar',
-                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: DefaultColors.greyText,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 40),
                     AuthTextField(
-                      suffixIcon: const Icon(Icons.email, color: Colors.black),
+                      suffixIcon: const Icon(Icons.email),
                       label: 'Email',
                       textInputAction: TextInputAction.done,
                       keyboardType: TextInputType.emailAddress,

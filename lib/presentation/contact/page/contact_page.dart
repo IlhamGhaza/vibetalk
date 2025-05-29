@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vibetalk/core/extensions/build_context_ext.dart';
-
 import '../../../core/bloc/theme_cubit.dart';
 import '../../../core/theme.dart';
 import '../../../core/widgets/spaces.dart';

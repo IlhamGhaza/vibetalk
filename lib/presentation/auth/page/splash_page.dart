@@ -125,12 +125,20 @@ class _SplashPageState extends State<SplashPage>
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(
-                            Icons.message,
-                            size: 150,
-                            color: isDarkMode
-                                ? AppTheme.lightTheme.primaryColor
-                                : AppTheme.darkTheme.primaryColor,
+                          Container(
+                            width: 100,
+                            height: 100,
+                            decoration: BoxDecoration(
+                              color: DefaultColors.primaryColor,
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: Image.asset(
+                                'assets/images/logo.png',
+                                fit: BoxFit.contain,
+                              ),
+                            ),
                           ),
                           const SizedBox(height: 20),
                           Text(
