@@ -77,7 +77,14 @@ class _ProfilePageState extends State<ProfilePage> {
         final theme = isDarkMode ? AppTheme.darkTheme : AppTheme.lightTheme;
         return Scaffold(
           backgroundColor: theme.scaffoldBackgroundColor,
-          appBar: AppBar(title: Text('profile.profile'.tr())),
+          appBar: AppBar(
+            title: Text(
+              'profile.profile'.tr(),
+              style: theme.textTheme.titleLarge?.copyWith(fontSize: 20),
+            ),
+            backgroundColor: theme.scaffoldBackgroundColor,
+            iconTheme: theme.iconTheme,
+          ),
           body: ListView(
             padding: const EdgeInsets.all(16.0),
             children: [
@@ -92,20 +99,15 @@ class _ProfilePageState extends State<ProfilePage> {
                             builder: (context) => const EditProfilePage(),
                           ),
                         ).then((_) {
-                          // Refresh user data when returning from EditProfilePage
                           _getCurrentUser();
                         });
                       },
                       child: CircleAvatar(
                         radius: 50,
-                        backgroundColor: Theme.of(context).primaryColor,
+                        backgroundColor: DefaultColors.primaryColor,
                         child:
                             _currentUser == null || _currentUser!.photo.isEmpty
-                            ? Icon(
-                                Icons.person,
-                                size: 60,
-                                color: Theme.of(context).colorScheme.onPrimary,
-                              )
+                            ? Icon(Icons.person, size: 60, color: Colors.white)
                             : ClipOval(
                                 child: Image.network(
                                   _currentUser!.photo,
@@ -116,9 +118,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     return Icon(
                                       Icons.person,
                                       size: 60,
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.onPrimary,
+                                      color: Colors.white,
                                     );
                                   },
                                   loadingBuilder:
@@ -127,6 +127,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                           return child;
                                         return Center(
                                           child: CircularProgressIndicator(
+                                            color: DefaultColors.primaryColor,
                                             value:
                                                 loadingProgress
                                                         .expectedTotalBytes !=
@@ -146,13 +147,13 @@ class _ProfilePageState extends State<ProfilePage> {
                     const SizedBox(height: 16),
                     Text(
                       _currentUser?.userName ?? _username,
-                      style: Theme.of(context).textTheme.titleLarge,
+                      style: theme.textTheme.titleLarge,
                     ),
                     const SizedBox(height: 4),
                     Text(
                       _currentUser?.email ?? _userEmail,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).textTheme.labelSmall?.color,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.textTheme.labelSmall?.color,
                       ),
                     ),
                   ],
@@ -164,8 +165,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 padding: const EdgeInsets.symmetric(vertical: 12.0),
                 child: Text(
                   context.tr('app.setting'),
-
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -185,12 +185,12 @@ class _ProfilePageState extends State<ProfilePage> {
                           ? Icons.dark_mode
                           : Icons.light_mode,
                       key: ValueKey(themeMode),
-                      color: Theme.of(context).colorScheme.primary,
+                      color: DefaultColors.primaryColor,
                     ),
                   ),
                   title: Text(
                     context.tr('profile.theme'),
-                    style: Theme.of(context).textTheme.titleMedium,
+                    style: theme.textTheme.titleMedium,
                   ),
                   trailing: BlocBuilder<ThemeCubit, ThemeMode>(
                     builder: (context, themeMode) {
@@ -201,7 +201,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             value ? ThemeMode.dark : ThemeMode.light,
                           );
                         },
-                        activeColor: Theme.of(context).colorScheme.primary,
+                        activeColor: DefaultColors.primaryColor,
                       );
                     },
                   ),
@@ -222,16 +222,18 @@ class _ProfilePageState extends State<ProfilePage> {
                       currentLanguageName = 'profile.korean'.tr();
                       break;
                     default:
-                      currentLanguageName = 'profile.indonesian'
-                          .tr(); // Default or fallback
+                      currentLanguageName = 'profile.indonesian'.tr();
                   }
                   return ListTile(
-                    leading: Icon(
-                      Icons.language,
-                      color: Theme.of(context).iconTheme.color,
+                    leading: Icon(Icons.language, color: theme.iconTheme.color),
+                    title: Text(
+                      'profile.language'.tr(),
+                      style: theme.textTheme.bodyMedium,
                     ),
-                    title: Text('profile.language'.tr()),
-                    trailing: Text(currentLanguageName),
+                    trailing: Text(
+                      currentLanguageName,
+                      style: theme.textTheme.bodyMedium,
+                    ),
                     onTap: () {
                       Navigator.push(
                         context,
@@ -247,27 +249,36 @@ class _ProfilePageState extends State<ProfilePage> {
               const Divider(height: 32),
 
               ListTile(
-                leading: Icon(
-                  Icons.logout,
-                  color: Theme.of(context).colorScheme.error,
-                ),
+                leading: Icon(Icons.logout, color: Colors.red),
                 title: Text(
                   context.tr('auth.logout'),
-                  style: TextStyle(color: Theme.of(context).colorScheme.error),
+                  style: TextStyle(color: Colors.red),
                 ),
                 onTap: () {
                   showDialog(
                     context: context,
                     builder: (context) {
                       return AlertDialog(
-                        title: Text(context.tr('auth.logout')),
-                        content: Text(context.tr('auth.logout_confirmation')),
+                        backgroundColor: theme.scaffoldBackgroundColor,
+                        title: Text(
+                          context.tr('auth.logout'),
+                          style: theme.textTheme.titleMedium,
+                        ),
+                        content: Text(
+                          context.tr('auth.logout_confirmation'),
+                          style: theme.textTheme.bodyMedium,
+                        ),
                         actions: [
                           TextButton(
                             onPressed: () {
                               Navigator.pop(context);
                             },
-                            child: Text(context.tr('app.cancel')),
+                            child: Text(
+                              context.tr('app.cancel'),
+                              style: TextStyle(
+                                color: DefaultColors.primaryColor,
+                              ),
+                            ),
                           ),
                           InkWell(
                             onTap: () {

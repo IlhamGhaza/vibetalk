@@ -345,7 +345,7 @@ class _ChatPageState extends State<ChatPage> {
     return BlocBuilder<ThemeCubit, ThemeMode>(
       builder: (context, themeMode) {
         final isDarkMode = themeMode == ThemeMode.dark;
-        final theme = Theme.of(context);
+        final theme = isDarkMode ? AppTheme.darkTheme : AppTheme.lightTheme;
 
         return Scaffold(
           backgroundColor: theme.scaffoldBackgroundColor,
@@ -422,9 +422,7 @@ class _ChatPageState extends State<ChatPage> {
 
                         if (snapshot.hasData) {
                           _messages = snapshot.data!;
-                          // Fix: Remove this problematic line and handle _lastDocument properly
                           if (_messages.isNotEmpty && _lastDocument == null) {
-                            // Initialize _lastDocument asynchronously if needed
                             _initializeLastDocument();
                           }
                         }

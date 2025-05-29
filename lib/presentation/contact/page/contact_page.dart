@@ -34,7 +34,9 @@ class _ContactPageState extends State<ContactPage> {
                 colors: [
                   DefaultColors.primaryColor.withValues(alpha: 0.9),
                   DefaultColors.primaryColor.withValues(alpha: 0.7),
-                  DefaultColors.darkScaffoldBackground,
+                  isDarkMode
+                      ? DefaultColors.darkScaffoldBackground
+                      : DefaultColors.lightScaffoldBackground,
                 ],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
@@ -119,10 +121,9 @@ class _ContactPageState extends State<ContactPage> {
                         const SpaceHeight(20),
                         Text(
                           context.tr('contact.users_section_title'),
-                          style: TextStyle(
+                          style: theme.textTheme.bodyLarge?.copyWith(
                             fontSize: 16.0,
                             fontWeight: FontWeight.bold,
-                            // color: Colors.black,
                           ),
                         ),
                         const SizedBox(height: 10),
@@ -131,8 +132,10 @@ class _ContactPageState extends State<ContactPage> {
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
-                              return const Center(
-                                child: CircularProgressIndicator(),
+                              return Center(
+                                child: CircularProgressIndicator(
+                                  color: DefaultColors.primaryColor,
+                                ),
                               );
                             }
                             if (snapshot.hasError) {
@@ -141,6 +144,7 @@ class _ContactPageState extends State<ContactPage> {
                                   context.tr(
                                     'contact.error_something_went_wrong',
                                   ),
+                                  style: theme.textTheme.bodyMedium,
                                 ),
                               );
                             }

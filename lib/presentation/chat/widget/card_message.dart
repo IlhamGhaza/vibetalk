@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../core/bloc/theme_cubit.dart';
 import '../../../core/theme.dart';
 import '../../../core/widgets/spaces.dart';
 import '../../../data/models/user_model.dart';
@@ -11,70 +13,74 @@ class CardMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDarkMode = theme.brightness == Brightness.dark;
+    return BlocBuilder<ThemeCubit, ThemeMode>(
+      builder: (context, themeMode) {
+        final isDarkMode = themeMode == ThemeMode.dark;
+        final theme = isDarkMode ? AppTheme.darkTheme : AppTheme.lightTheme;
 
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) {
-              return ChatPage(partnerUser: user);
-            },
-          ),
-        );
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
-        child: Row(
-          children: [
-            CircleAvatar(
-              backgroundColor: DefaultColors.primaryColor,
-              radius: 26,
-              child: user.photo.isEmpty
-                  ? const Icon(Icons.person, size: 30, color: Colors.white)
-                  : CircleAvatar(
-                      radius: 25,
-                      backgroundImage: NetworkImage(user.photo),
-                    ),
-            ),
-            const SpaceWidth(8),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    user.userName,
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    "Last message",
-                    style: theme.textTheme.labelSmall?.copyWith(fontSize: 12.0),
-                  ),
-                ],
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) {
+                  return ChatPage(partnerUser: user);
+                },
               ),
-            ),
-            const SpaceWidth(16),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
+            );
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+            child: Row(
               children: [
-                Text(
-                  '${(DateTime.now().hour - (1 + index)).toString().padLeft(2, '0')}:${DateTime.now().minute.toString().padLeft(2, '0')}',
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    fontSize: 12.0,
-                    color: (isDarkMode ? DefaultColors.greyText : Colors.grey)
-                        .withOpacity(0.8),
+                CircleAvatar(
+                  backgroundColor: DefaultColors.primaryColor,
+                  radius: 26,
+                  child: user.photo.isEmpty
+                      ? const Icon(Icons.person, size: 30, color: Colors.white)
+                      : CircleAvatar(
+                          radius: 25,
+                          backgroundImage: NetworkImage(user.photo),
+                        ),
+                ),
+                const SpaceWidth(8),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        user.userName,
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        "Last message",
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          fontSize: 12.0,
+                        ),
+                      ),
+                    ],
                   ),
+                ),
+                const SpaceWidth(16),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      '${(DateTime.now().hour - (1 + index)).toString().padLeft(2, '0')}:${DateTime.now().minute.toString().padLeft(2, '0')}',
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        fontSize: 12.0,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }
