@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../models/channel_model.dart';
@@ -6,10 +8,10 @@ import '../models/user_model.dart';
 
 String channelId(String id1, String id2) {
   if (id1.hashCode < id2.hashCode) {
-    print('channelid: $id1-$id2');
+    log('channelid: $id1-$id2');
     return '$id1-$id2';
   }
-  print('channelid: $id1-$id2');
+  log('channelid: $id1-$id2');
   return '$id2-$id1';
 }
 

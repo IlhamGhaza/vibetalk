@@ -126,6 +126,7 @@ class _ContactPageState extends State<ContactPage> {
                             // color: Colors.black,
                           ),
                         ),
+                        const SizedBox(height: 10),
                         StreamBuilder<List<UserModel>>(
                           stream: FirebaseDatasource.instance.allUser(),
                           builder: (context, snapshot) {
@@ -137,7 +138,11 @@ class _ContactPageState extends State<ContactPage> {
                             }
                             if (snapshot.hasError) {
                               return Center(
-                                child: Text(context.tr('contact.error_something_went_wrong')),
+                                child: Text(
+                                  context.tr(
+                                    'contact.error_something_went_wrong',
+                                  ),
+                                ),
                               );
                             }
                             return ListView.separated(

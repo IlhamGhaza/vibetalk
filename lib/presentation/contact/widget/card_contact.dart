@@ -9,6 +9,9 @@ class CardContact extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
+
     return Row(
       children: [
         ClipRRect(
@@ -24,10 +27,10 @@ class CardContact extends StatelessWidget {
                   width: 52.0,
                   height: 52.0,
                   color: Colors.grey,
-                  child: const Icon(
+                  child: Icon(
                     size: 32,
                     Icons.person,
-                    color: Colors.white,
+                    color: isDarkMode ? Colors.white : Colors.grey[600],
                   ),
                 ),
         ),
@@ -38,15 +41,14 @@ class CardContact extends StatelessWidget {
             children: [
               Text(
                 user.userName,
-                style: const TextStyle(
+                style: theme.textTheme.bodyLarge?.copyWith(
                   fontSize: 20.0,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black,
                 ),
               ),
               Text(
                 user.email,
-                style: const TextStyle(fontSize: 12.0, color: Colors.grey),
+                style: theme.textTheme.labelSmall?.copyWith(fontSize: 12.0),
               ),
             ],
           ),

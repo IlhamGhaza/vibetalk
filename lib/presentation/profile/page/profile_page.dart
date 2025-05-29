@@ -5,13 +5,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vibetalk/core/utils/snackbar_utils.dart';
-import 'package:vibetalk/presentation/profile/edit_profile_page.dart';
-import '../../core/bloc/language_cubit.dart';
-import '../../core/bloc/theme_cubit.dart';
-import '../../core/theme.dart';
-import '../../data/datasources/firebase_datasource.dart';
-import '../../data/models/user_model.dart';
-import '../auth/page/splash_page.dart';
+import 'package:vibetalk/presentation/profile/page/edit_profile_page.dart';
+import '../../../core/bloc/language_cubit.dart';
+import '../../../core/bloc/theme_cubit.dart';
+import '../../../core/theme.dart';
+import '../../../data/datasources/firebase_datasource.dart';
+import '../../../data/models/user_model.dart';
+import '../../auth/page/splash_page.dart';
 import 'language_selection_page.dart';
 
 class ProfilePage extends StatefulWidget {

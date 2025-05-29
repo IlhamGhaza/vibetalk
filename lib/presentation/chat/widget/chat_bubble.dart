@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:vibetalk/core/theme.dart';
 
@@ -12,13 +11,13 @@ enum Direction { left, right }
 
 class ChatBubble extends StatelessWidget {
   const ChatBubble({
-    Key? key,
+    super.key,
     required this.direction,
     required this.message,
     this.photoUrl,
     required this.type,
     required this.partnerUser,
-  }) : super(key: key);
+  });
   final Direction direction;
   final String message;
   final String? photoUrl;
@@ -28,25 +27,30 @@ class ChatBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isOnLeft = direction == Direction.left;
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
+
     return Column(
       crossAxisAlignment: isOnLeft
           ? CrossAxisAlignment.start
           : CrossAxisAlignment.end,
       children: [
-        // if (isOnLeft) _buildLeading(type, partnerUser.username),
         Row(
           mainAxisAlignment: isOnLeft
               ? MainAxisAlignment.start
               : MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            // SizedBox(width: isOnLeft ? 40 : 0),
             Row(
               children: [
                 isOnLeft
-                    ? const Padding(
-                        padding: EdgeInsets.only(right: 8),
-                        child: Icon(Icons.person, color: Colors.grey, size: 20),
+                    ? Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: Icon(
+                          Icons.person,
+                          color: theme.iconTheme.color?.withOpacity(0.6),
+                          size: 20,
+                        ),
                       )
                     : const SizedBox(),
                 Container(
@@ -58,22 +62,31 @@ class ChatBubble extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: _borderRadius(direction, type),
                     color: isOnLeft
-                        ? const Color(0xffF2F7FB)
-                        : DefaultColors.primaryColor,
+                        ? (isDarkMode
+                              ? DefaultColors.darkReceiverMessage
+                              : DefaultColors.lightReceiverMessage)
+                        : (isDarkMode
+                              ? DefaultColors.darkSenderMessage
+                              : DefaultColors.lightSenderMessage),
                   ),
                   child: Text(
                     message,
                     style: TextStyle(
                       fontWeight: FontWeight.w500,
-                      color: isOnLeft ? Colors.black : Colors.white,
-                      // overflow: TextOverflow.ellipsis,
+                      color: isOnLeft
+                          ? (isDarkMode ? Colors.white : Colors.black87)
+                          : Colors.white,
                     ),
                   ),
                 ),
                 !isOnLeft
-                    ? const Padding(
-                        padding: EdgeInsets.only(left: 8),
-                        child: Icon(Icons.person, color: Colors.grey, size: 20),
+                    ? Padding(
+                        padding: const EdgeInsets.only(left: 8),
+                        child: Icon(
+                          Icons.person,
+                          color: theme.iconTheme.color?.withOpacity(0.6),
+                          size: 20,
+                        ),
                       )
                     : const SizedBox(),
               ],
@@ -84,7 +97,7 @@ class ChatBubble extends StatelessWidget {
     );
   }
 
-  Widget _buildLeading(BubbleType type, String name) {
+  Widget _buildLeading(BubbleType type, String name, ThemeData theme) {
     if (type == BubbleType.alone || type == BubbleType.bottom) {
       if (photoUrl != null) {
         return Row(
@@ -93,10 +106,9 @@ class ChatBubble extends StatelessWidget {
             const SpaceWidth(12),
             Text(
               name,
-              style: const TextStyle(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 fontSize: 14.0,
                 fontWeight: FontWeight.bold,
-                color: Colors.black,
               ),
             ),
           ],
@@ -108,10 +120,9 @@ class ChatBubble extends StatelessWidget {
           const SpaceWidth(12),
           Text(
             name,
-            style: const TextStyle(
+            style: theme.textTheme.bodyMedium?.copyWith(
               fontSize: 14.0,
               fontWeight: FontWeight.bold,
-              color: Colors.black,
             ),
           ),
         ],

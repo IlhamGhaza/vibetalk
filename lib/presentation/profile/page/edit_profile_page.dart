@@ -9,10 +9,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:vibetalk/presentation/auth/widget/auth_button.dart';
 
-import '../../core/utils/permission.dart';
-import '../../core/utils/snackbar_utils.dart';
+import '../../../core/utils/permission.dart';
+import '../../../core/utils/snackbar_utils.dart';
 
-import '../../data/models/user_model.dart';
+import '../../../data/models/user_model.dart';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
@@ -381,12 +381,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 children: [
                   _buildBottomSheetOption(
                     Icons.camera,
-                    'app.camera'.tr(),
+                    'permission.camera'.tr(),
                     onTap: _getImageFromCamera,
                   ),
                   _buildBottomSheetOption(
                     Icons.image,
-                    'app.gallery'.tr(),
+                    'permission.gallery'.tr(),
                     onTap: _getImageFromGallery,
                   ),
                   _buildBottomSheetOption(

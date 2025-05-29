@@ -8,8 +8,10 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:vibetalk/core/utils/snackbar_utils.dart';
 import '../../../core/bloc/theme_cubit.dart';
 import '../../../core/theme.dart';
+import '../../../core/utils/permission.dart';
 import '../widget/chat_bubble.dart';
 import '../widget/chat_bubble_image.dart';
 import '../../../core/widgets/spaces.dart';
@@ -34,19 +36,7 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   void initState() {
-    analyticsLogEvent();
     super.initState();
-  }
-
-  void analyticsLogEvent() async {
-    await FirebaseAnalytics.instance.logBeginCheckout(
-      value: 10.0,
-      currency: 'USD',
-      items: [
-        AnalyticsEventItem(itemName: 'Socks', itemId: 'xjw73ndnw', price: 10.0),
-      ],
-      coupon: '10PERCENTOFF',
-    );
   }
 
   void sendMessage() async {
@@ -91,52 +81,196 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   void _sendMessageImage(bool isCamera) async {
-    final XFile? image = await ImagePicker().pickImage(
-      source: isCamera ? ImageSource.camera : ImageSource.gallery,
-    );
-    if (image != null) {
-      // Create a Reference to the file
+    try {
+      XFile? image;
 
-      final storageRef = FirebaseStorage.instance.ref();
-      final imageRef = storageRef
-          .child('images')
-          .child('${DateTime.now().millisecondsSinceEpoch}.jpg');
-      await imageRef.putFile(File(image.path));
+      if (isCamera) {
+        try {
+          bool cameraPermissionGranted = await checkCameraPermission();
+          if (cameraPermissionGranted) {
+            image = await ImagePicker().pickImage(
+              source: ImageSource.camera,
+              imageQuality: 80,
+            );
+          } else {
+            if (mounted) {
+              SnackbarUtils(
+                text: 'Camera permission is required to take photos',
+                backgroundColor: Colors.red,
+              );
+            }
+            return;
+          }
+        } catch (e) {
+          debugPrint('Camera permission error: $e');
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  'Camera not available, switching to gallery',
+                  style: TextStyle(color: Colors.white),
+                ),
+                backgroundColor: Colors.orange,
+              ),
+            );
+          }
 
-      // Dapatkan URL gambar yang telah diupload
-      final imageUrl = await imageRef.getDownloadURL();
-      final channel = Channel(
-        id: channelId(currentUser!.uid, widget.partnerUser.id),
-        memberIds: [currentUser!.uid, widget.partnerUser.id],
-        members: [UserModel.fromFirebaseUser(currentUser!), widget.partnerUser],
-        lastMessage: 'Send an image',
-        sendBy: currentUser!.uid,
-        lastTime: Timestamp.now(),
-        unRead: {currentUser!.uid: false, widget.partnerUser.id: true},
-      );
-      await FirebaseDatasource.instance.updateChannel(
-        channel.id,
-        channel.toMap(),
-      );
+          isCamera = false;
+        }
+      }
 
-      var docRef = FirebaseFirestore.instance.collection('messages').doc();
-      var message = Message(
-        id: docRef.id,
-        textMessage: imageUrl,
-        senderId: currentUser!.uid,
-        sendAt: Timestamp.now(),
-        channelId: channel.id,
-        type: 'image',
-      );
-      FirebaseDatasource.instance.addMessage(message);
+      if (!isCamera) {
+        try {
+          bool storagePermissionGranted =
+              await checkAndroidExternalStoragePermission();
+          if (storagePermissionGranted) {
+            image = await ImagePicker().pickImage(
+              source: ImageSource.gallery,
+              imageQuality: 80,
+            );
+          } else {
+            if (mounted) {
+              SnackbarUtils(
+                text: 'Storage permission is required to access gallery',
+                backgroundColor: Colors.red,
+              ).showErrorSnackBar(context);
+            }
+            return;
+          }
+        } catch (e) {
+          debugPrint('Storage permission error: $e');
+          if (mounted) {
+            SnackbarUtils(
+              text: 'Unable to access gallery: ${e.toString()}',
+              backgroundColor: Colors.red,
+            ).showErrorSnackBar(context);
+          }
+          return;
+        }
+      }
 
-      var channelUpdateData = {
-        'lastMessage': 'Send an image',
-        'sendBy': currentUser!.uid,
-        'lastTime': message.sendAt,
-        'unRead': {currentUser!.uid: false, widget.partnerUser.id: true},
-      };
-      FirebaseDatasource.instance.updateChannel(channel.id, channelUpdateData);
+      if (image != null) {
+        final String fileExtension = image.path.toLowerCase();
+        if (!fileExtension.endsWith('.jpg') &&
+            !fileExtension.endsWith('.jpeg') &&
+            !fileExtension.endsWith('.png') &&
+            !fileExtension.endsWith('.gif') &&
+            !fileExtension.endsWith('.webp')) {
+          if (mounted) {
+            SnackbarUtils(
+              text: 'Please select a valid image file (JPG, PNG, GIF, WEBP)',
+              backgroundColor: Colors.red,
+            ).showErrorSnackBar(context);
+          }
+          return;
+        }
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                children: [
+                  SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  ),
+                  SizedBox(width: 16),
+                  Text('Uploading image...'),
+                ],
+              ),
+              duration: Duration(seconds: 10),
+            ),
+          );
+        }
+
+        try {
+          final storageRef = FirebaseStorage.instance.ref();
+          final imageRef = storageRef
+              .child('images')
+              .child('${DateTime.now().millisecondsSinceEpoch}.jpg');
+
+          await imageRef.putFile(File(image.path));
+
+          final imageUrl = await imageRef.getDownloadURL();
+
+          final channel = Channel(
+            id: channelId(currentUser!.uid, widget.partnerUser.id),
+            memberIds: [currentUser!.uid, widget.partnerUser.id],
+            members: [
+              UserModel.fromFirebaseUser(currentUser!),
+              widget.partnerUser,
+            ],
+            lastMessage: 'Send an image',
+            sendBy: currentUser!.uid,
+            lastTime: Timestamp.now(),
+            unRead: {currentUser!.uid: false, widget.partnerUser.id: true},
+          );
+
+          await FirebaseDatasource.instance.updateChannel(
+            channel.id,
+            channel.toMap(),
+          );
+
+          var docRef = FirebaseFirestore.instance.collection('messages').doc();
+          var message = Message(
+            id: docRef.id,
+            textMessage: imageUrl,
+            senderId: currentUser!.uid,
+            sendAt: Timestamp.now(),
+            channelId: channel.id,
+            type: 'image',
+          );
+
+          FirebaseDatasource.instance.addMessage(message);
+
+          var channelUpdateData = {
+            'lastMessage': 'Send an image',
+            'sendBy': currentUser!.uid,
+            'lastTime': message.sendAt,
+            'unRead': {currentUser!.uid: false, widget.partnerUser.id: true},
+          };
+
+          FirebaseDatasource.instance.updateChannel(
+            channel.id,
+            channelUpdateData,
+          );
+
+          if (mounted) {
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  'Image sent successfully',
+                  style: TextStyle(color: Colors.white),
+                ),
+                backgroundColor: Colors.green,
+                duration: Duration(seconds: 2),
+              ),
+            );
+          }
+        } catch (e) {
+          debugPrint('Error uploading image: $e');
+          if (mounted) {
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            SnackbarUtils(
+              text: 'Failed to upload image: ${e.toString()}',
+              backgroundColor: Colors.red,
+            ).showErrorSnackBar(context);
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error in _sendMessageImage: $e');
+      if (mounted) {
+        SnackbarUtils(
+          text: 'An error occurred: ${e.toString()}',
+          backgroundColor: Colors.red,
+        ).showErrorSnackBar(context);
+      }
     }
   }
 
@@ -145,8 +279,10 @@ class _ChatPageState extends State<ChatPage> {
     return BlocBuilder<ThemeCubit, ThemeMode>(
       builder: (context, themeMode) {
         final isDarkMode = themeMode == ThemeMode.dark;
-        final theme = isDarkMode ? AppTheme.darkTheme : AppTheme.lightTheme;
+        final theme = Theme.of(context);
+
         return Scaffold(
+          backgroundColor: theme.scaffoldBackgroundColor,
           body: SafeArea(
             child: Padding(
               padding: const EdgeInsets.symmetric(
@@ -161,7 +297,10 @@ class _ChatPageState extends State<ChatPage> {
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        icon: const Icon(Icons.arrow_back, color: Colors.black),
+                        icon: Icon(
+                          Icons.arrow_back,
+                          color: theme.iconTheme.color,
+                        ),
                       ),
                       const SpaceWidth(16),
                       widget.partnerUser.photo.isEmpty
@@ -185,17 +324,15 @@ class _ChatPageState extends State<ChatPage> {
                         children: [
                           Text(
                             widget.partnerUser.userName,
-                            style: const TextStyle(
+                            style: theme.textTheme.bodyLarge?.copyWith(
                               fontSize: 16.0,
                               fontWeight: FontWeight.bold,
-                              color: Colors.black,
                             ),
                           ),
-                          const Text(
+                          Text(
                             "Active now",
-                            style: TextStyle(
+                            style: theme.textTheme.labelSmall?.copyWith(
                               fontSize: 12.0,
-                              color: Colors.grey,
                             ),
                           ),
                         ],
@@ -210,15 +347,19 @@ class _ChatPageState extends State<ChatPage> {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
+                          return Center(
+                            child: CircularProgressIndicator(
+                              color: DefaultColors.primaryColor,
+                            ),
                           );
                         }
                         final List<Message> messages = snapshot.data ?? [];
-                        //if message is null
                         if (messages.isEmpty) {
                           return Center(
-                            child: Text(context.tr('home.no_message')),
+                            child: Text(
+                              context.tr('home.no_message'),
+                              style: theme.textTheme.bodyMedium,
+                            ),
                           );
                         }
                         return ListView.builder(
@@ -264,7 +405,9 @@ class _ChatPageState extends State<ChatPage> {
                               horizontal: 16.0,
                             ),
                             decoration: BoxDecoration(
-                              color: const Color(0xffF3F6F6),
+                              color: isDarkMode
+                                  ? DefaultColors.darkInputBackground
+                                  : DefaultColors.lightInputBackground,
                               borderRadius: BorderRadius.circular(16.0),
                             ),
                             child: Row(
@@ -273,8 +416,10 @@ class _ChatPageState extends State<ChatPage> {
                                 Expanded(
                                   child: TextField(
                                     controller: _messageController,
-                                    decoration:  InputDecoration(
+                                    style: theme.textTheme.bodyMedium,
+                                    decoration: InputDecoration(
                                       hintText: "chat.type_message".tr(),
+                                      hintStyle: theme.textTheme.labelSmall,
                                       border: InputBorder.none,
                                     ),
                                   ),
@@ -298,7 +443,20 @@ class _ChatPageState extends State<ChatPage> {
                           onTap: () {
                             _sendMessageImage(true);
                           },
-                          child: const Icon(Icons.camera_alt),
+                          child: Icon(
+                            Icons.camera_alt,
+                            color: theme.iconTheme.color,
+                          ),
+                        ),
+                        const SpaceWidth(16),
+                        GestureDetector(
+                          onTap: () {
+                            _sendMessageImage(false);
+                          },
+                          child: Icon(
+                            Icons.photo_library,
+                            color: theme.iconTheme.color,
+                          ),
                         ),
                         const SpaceWidth(16),
                       ],

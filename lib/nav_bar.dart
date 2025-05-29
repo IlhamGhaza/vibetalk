@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'presentation/contact/page/contact_page.dart';
 import 'presentation/conversation/conversation_page.dart';
-import 'presentation/profile/profile_page.dart';
+import 'presentation/profile/page/profile_page.dart';
 import 'core/utils/responsif_helper.dart';
 
 class NavBar extends StatefulWidget {
