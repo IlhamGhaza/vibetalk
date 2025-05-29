@@ -1,0 +1,135 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+      - run: flutter pub get
+      - run: flutter build apk --release
+      - run: flutter build appbundle --release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-release
+          path: |
+            build/app/outputs/flutter-apk/app-release.apk
+            build/app/outputs/bundle/release/app-release.aab
+
+  build-web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+      - run: flutter pub get
+      - run: flutter build web --release
+      - name: Archive Web Build
+        run: |
+          cd build
+          tar -czf vibetalk-web.tar.gz web/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: web-release
+          path: build/vibetalk-web.tar.gz
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+      - run: flutter pub get
+      - run: flutter build windows --release
+      - name: Archive Windows Build
+        run: |
+          cd build/windows/x64/runner/Release
+          7z a -tzip ../../../../../vibetalk-windows.zip *
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-release
+          path: vibetalk-windows.zip
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+      - run: flutter pub get
+      - run: flutter build macos --release
+      - name: Archive macOS Build
+        run: |
+          cd build/macos/Build/Products/Release
+          tar -czf ../../../../../vibetalk-macos.tar.gz *.app
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos-release
+          path: vibetalk-macos.tar.gz
+
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+      - run: |
+          sudo apt-get update -y
+          sudo apt-get install -y ninja-build libgtk-3-dev
+      - run: flutter pub get
+      - run: flutter build linux --release
+      - name: Archive Linux Build
+        run: |
+          cd build/linux/x64/release
+          tar -czf ../../../../vibetalk-linux.tar.gz bundle/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux-release
+          path: vibetalk-linux.tar.gz
+
+  create-release:
+    needs: [build-android, build-web, build-windows, build-macos, build-linux]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      
+      - name: Display structure of downloaded files
+        run: ls -la artifacts/
+      
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            artifacts/android-release/app-release.apk
+            artifacts/android-release/app-release.aab
+            artifacts/web-release/vibetalk-web.tar.gz
+            artifacts/windows-release/vibetalk-windows.zip
+            artifacts/macos-release/vibetalk-macos.tar.gz
+            artifacts/linux-release/vibetalk-linux.tar.gz
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
