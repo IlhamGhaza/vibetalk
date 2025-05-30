@@ -83,7 +83,7 @@ class _LoginPageState extends State<LoginPage> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       const SizedBox(height: 28),
-                     Container(
+                      Container(
                         width: 100,
                         height: 100,
                         decoration: BoxDecoration(
@@ -243,12 +243,19 @@ class _LoginPageState extends State<LoginPage> {
                             side: BorderSide(
                               color: isDarkMode
                                   ? Colors.transparent
-                                  : DefaultColors.greyText.withOpacity(0.3),
+                                  : DefaultColors.greyText.withValues(
+                                      alpha: 0.3,
+                                    ),
                             ),
                           ),
                           elevation: 0,
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          SnackbarUtils(
+                            text: 'auth.feature_not_available'.tr(),
+                            backgroundColor: Colors.red,
+                          ).showErrorSnackBar(context);
+                        },
                       ),
                       const SizedBox(height: 24),
                     ],

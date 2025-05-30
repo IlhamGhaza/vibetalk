@@ -285,12 +285,19 @@ class _RegisterPageState extends State<RegisterPage> {
                             side: BorderSide(
                               color: isDarkMode
                                   ? Colors.transparent
-                                  : DefaultColors.greyText.withOpacity(0.3),
+                                  : DefaultColors.greyText.withValues(
+                                      alpha: 0.3,
+                                    ),
                             ),
                           ),
                           elevation: 0,
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          SnackbarUtils(
+                            text: 'auth.feature_not_available'.tr(),
+                            backgroundColor: Colors.red,
+                          ).showErrorSnackBar(context);
+                        },
                       ),
                     ],
                   ),

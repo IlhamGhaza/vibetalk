@@ -98,7 +98,7 @@ class AuthTextField extends StatelessWidget {
                   borderSide: BorderSide(
                     color: isDarkMode
                         ? Colors.transparent
-                        : DefaultColors.greyText.withOpacity(0.3),
+                        : DefaultColors.greyText.withValues(alpha: 0.3),
                   ),
                 ),
                 enabledBorder: OutlineInputBorder(
@@ -106,13 +106,13 @@ class AuthTextField extends StatelessWidget {
                   borderSide: BorderSide(
                     color: isDarkMode
                         ? Colors.transparent
-                        : DefaultColors.greyText.withOpacity(0.3),
+                        : DefaultColors.greyText.withValues(alpha: 0.3),
                   ),
                 ),
                 disabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide(
-                    color: DefaultColors.greyText.withOpacity(0.2),
+                    color: DefaultColors.greyText.withValues(alpha: 0.2),
                   ),
                 ),
                 focusedBorder: OutlineInputBorder(

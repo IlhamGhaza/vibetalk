@@ -22,133 +22,137 @@ class ConversationPage extends StatefulWidget {
 class _ConversationPageState extends State<ConversationPage> {
   final FirebaseAuth auth = FirebaseAuth.instance;
 
- @override
-Widget build(BuildContext context) {
-  return BlocBuilder<ThemeCubit, ThemeMode>(
-    builder: (context, themeMode) {
-      final isDarkMode = themeMode == ThemeMode.dark;
-      final theme = isDarkMode ? AppTheme.darkTheme : AppTheme.lightTheme;
-      return Scaffold(
-        body: Container(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                DefaultColors.primaryColor.withValues(alpha: 0.9),
-                DefaultColors.primaryColor.withValues(alpha: 0.7),
-                isDarkMode 
-                    ? DefaultColors.darkScaffoldBackground 
-                    : DefaultColors.lightScaffoldBackground,
-              ],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              stops: const [0.0, 0.5, 1.0],
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<ThemeCubit, ThemeMode>(
+      builder: (context, themeMode) {
+        final isDarkMode = themeMode == ThemeMode.dark;
+        final theme = isDarkMode ? AppTheme.darkTheme : AppTheme.lightTheme;
+        return Scaffold(
+          body: Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  DefaultColors.primaryColor.withValues(alpha: 0.9),
+                  DefaultColors.primaryColor.withValues(alpha: 0.7),
+                  isDarkMode
+                      ? DefaultColors.darkScaffoldBackground
+                      : DefaultColors.lightScaffoldBackground,
+                ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                stops: const [0.0, 0.5, 1.0],
+              ),
             ),
-          ),
-          child: Stack(
-            children: [
-              SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Column(
-                    children: [
-                      const SpaceHeight(16),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            width: 44.0,
-                            height: 44.0,
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(22.0),
-                            ),
-                            child: const Icon(
-                              Icons.search,
-                              color: Colors.white,
-                            ),
-                          ),
-                          Text(
-                            context.tr('app.title'),
-                            style: TextStyle(
-                              fontSize: 24.0,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              letterSpacing: 1.2,
-                            ),
-                          ),
-                          Hero(
-                            tag: 'profile_picture',
-                            child: CircleAvatar(
-                              radius: 22,
-                              backgroundColor: Colors.white,
-                              child: CircleAvatar(
-                                radius: 21,
-                                backgroundImage:
-                                    auth.currentUser?.photoURL != null &&
-                                        auth.currentUser!.photoURL!.isNotEmpty
-                                    ? NetworkImage(
-                                        auth.currentUser!.photoURL!,
-                                      )
-                                    : null,
-                                child:
-                                    auth.currentUser?.photoURL == null ||
-                                        auth.currentUser!.photoURL!.isEmpty
-                                    ? const Icon(
-                                        Icons.person,
-                                        color: Colors.white,
-                                      )
-                                    : null,
+            child: Stack(
+              children: [
+                SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Column(
+                      children: [
+                        const SpaceHeight(16),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              width: 44.0,
+                              height: 44.0,
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.2),
+                                borderRadius: BorderRadius.circular(22.0),
+                              ),
+                              child: const Icon(
+                                Icons.search,
+                                color: Colors.white,
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                      const SpaceHeight(32),
-                      SizedBox(
-                        height: 110,
-                        child: ListView.separated(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: 5,
-                          separatorBuilder:
-                              (BuildContext context, int index) {
-                                return const SpaceWidth(16);
-                              },
-                          itemBuilder: (BuildContext context, int index) {
-                            if (index == 0) {
-                              return Column(
-                                children: [
-                                  Container(
-                                    width: 64.0,
-                                    height: 64.0,
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        colors: [
-                                          Colors.white.withOpacity(0.2),
-                                          Colors.white.withOpacity(0.1),
-                                        ],
-                                        begin: Alignment.topLeft,
-                                        end: Alignment.bottomRight,
+                            Text(
+                              context.tr('app.title'),
+                              style: TextStyle(
+                                fontSize: 24.0,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                letterSpacing: 1.2,
+                              ),
+                            ),
+                            Hero(
+                              tag: 'profile_picture',
+                              child: CircleAvatar(
+                                radius: 22,
+                                backgroundColor: Colors.white,
+                                child: CircleAvatar(
+                                  radius: 21,
+                                  backgroundImage:
+                                      auth.currentUser?.photoURL != null &&
+                                          auth.currentUser!.photoURL!.isNotEmpty
+                                      ? NetworkImage(
+                                          auth.currentUser!.photoURL!,
+                                        )
+                                      : null,
+                                  child:
+                                      auth.currentUser?.photoURL == null ||
+                                          auth.currentUser!.photoURL!.isEmpty
+                                      ? const Icon(
+                                          Icons.person,
+                                          color: Colors.white,
+                                        )
+                                      : null,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SpaceHeight(32),
+                        SizedBox(
+                          height: 110,
+                          child: ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: 5,
+                            separatorBuilder:
+                                (BuildContext context, int index) {
+                                  return const SpaceWidth(16);
+                                },
+                            itemBuilder: (BuildContext context, int index) {
+                              if (index == 0) {
+                                return Column(
+                                  children: [
+                                    Container(
+                                      width: 64.0,
+                                      height: 64.0,
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            Colors.white.withValues(alpha: 0.2),
+                                            Colors.white.withValues(alpha: 0.1),
+                                          ],
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                        ),
+                                        borderRadius: BorderRadius.circular(
+                                          32.0,
+                                        ),
+                                        border: Border.all(
+                                          color: Colors.white.withValues(
+                                            alpha: 0.3,
+                                          ),
+                                          width: 2,
+                                        ),
                                       ),
-                                      borderRadius: BorderRadius.circular(
-                                        32.0,
-                                      ),
-                                      border: Border.all(
-                                        color: Colors.white.withOpacity(0.3),
-                                        width: 2,
+                                      child: Icon(
+                                        Icons.add,
+                                        color: Colors.white.withValues(
+                                          alpha: 0.9,
+                                        ),
+                                        size: 28,
                                       ),
                                     ),
-                                    child: Icon(
-                                      Icons.add,
-                                      color: Colors.white.withOpacity(0.9),
-                                      size: 28,
-                                    ),
-                                  ),
-                                  const SpaceHeight(8),
-                                  Text(
-                                    context.tr('home.add_story'),
-                                                                       style: TextStyle(
+                                    const SpaceHeight(8),
+                                    Text(
+                                      context.tr('home.add_story'),
+                                      style: TextStyle(
                                         fontSize: 14.0,
                                         color: Colors.white,
                                         fontWeight: FontWeight.w500,
@@ -178,7 +182,7 @@ Widget build(BuildContext context) {
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
+                        color: Colors.black.withValues(alpha: 0.1),
                         blurRadius: 10,
                         offset: const Offset(0, -5),
                       ),
@@ -190,7 +194,7 @@ Widget build(BuildContext context) {
                         height: 4,
                         width: 40,
                         decoration: BoxDecoration(
-                          color: Colors.grey.withOpacity(0.3),
+                          color: Colors.grey.withValues(alpha: 0.3),
                           borderRadius: const BorderRadius.all(
                             Radius.circular(16.0),
                           ),
@@ -242,8 +246,8 @@ Widget build(BuildContext context) {
                                     Icon(
                                       Icons.chat_bubble_outline,
                                       size: 64,
-                                      color: theme.iconTheme.color?.withOpacity(
-                                        0.5,
+                                      color: theme.iconTheme.color?.withValues(
+                                        alpha: 0.5,
                                       ),
                                     ),
                                     const SpaceHeight(16),
@@ -353,14 +357,17 @@ Widget build(BuildContext context) {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Colors.white.withOpacity(0.2),
-                Colors.white.withOpacity(0.1),
+                Colors.white.withValues(alpha: 0.2),
+                Colors.white.withValues(alpha: 0.1),
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
             borderRadius: BorderRadius.circular(32.0),
-            border: Border.all(color: Colors.white.withOpacity(0.3), width: 2),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.3),
+              width: 2,
+            ),
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(30.0),

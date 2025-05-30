@@ -57,7 +57,7 @@ class _ContactPageState extends State<ContactPage> {
                             width: 44.0,
                             height: 44.0,
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
+                              color: Colors.white.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(22.0),
                             ),
                             child: const Icon(
@@ -77,7 +77,7 @@ class _ContactPageState extends State<ContactPage> {
                             width: 44.0,
                             height: 44.0,
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
+                              color: Colors.white.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(22.0),
                             ),
                             child: const Icon(

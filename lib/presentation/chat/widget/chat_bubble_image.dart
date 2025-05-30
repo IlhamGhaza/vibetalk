@@ -6,7 +6,11 @@ import 'chat_bubble.dart';
 class ChatBubbleImage extends StatelessWidget {
   final String url;
   final Direction direction;
-  const ChatBubbleImage({super.key, required this.url, required this.direction});
+  const ChatBubbleImage({
+    super.key,
+    required this.url,
+    required this.direction,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +40,7 @@ class ChatBubbleImage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12.0),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
+                              color: Colors.black.withValues(alpha: 0.1),
                               blurRadius: 4,
                               offset: const Offset(0, 2),
                             ),
@@ -87,8 +91,8 @@ class ChatBubbleImage extends StatelessWidget {
                                 ),
                                 child: Icon(
                                   Icons.broken_image,
-                                  color: theme.iconTheme.color?.withOpacity(
-                                    0.5,
+                                  color: theme.iconTheme.color?.withValues(
+                                    alpha: 0.5,
                                   ),
                                   size: 40,
                                 ),

@@ -498,7 +498,7 @@ class _ChatPageState extends State<ChatPage> {
                               borderRadius: BorderRadius.circular(24.0),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.05),
+                                  color: Colors.black.withValues(alpha: 0.05),
                                   blurRadius: 8,
                                   offset: const Offset(0, 2),
                                 ),
@@ -510,9 +510,7 @@ class _ChatPageState extends State<ChatPage> {
                                 Expanded(
                                   child: TextField(
                                     controller: _messageController,
-                                    style: TextStyle(
-                                      color: Colors.white
-                                    ),
+                                    style: TextStyle(color: Colors.white),
                                     cursorColor: DefaultColors.primaryColor,
                                     decoration: InputDecoration(
                                       hintText: "chat.type_message".tr(),
@@ -580,7 +578,9 @@ class _ChatPageState extends State<ChatPage> {
         decoration: BoxDecoration(
           color: theme.scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: theme.iconTheme.color!.withOpacity(0.2)),
+          border: Border.all(
+            color: theme.iconTheme.color!.withValues(alpha: 0.2),
+          ),
         ),
         padding: const EdgeInsets.all(8.0),
         child: Icon(icon, color: theme.iconTheme.color, size: 20),

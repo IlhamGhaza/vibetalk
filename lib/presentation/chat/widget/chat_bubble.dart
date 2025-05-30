@@ -48,7 +48,7 @@ class ChatBubble extends StatelessWidget {
                         padding: const EdgeInsets.only(right: 8),
                         child: Icon(
                           Icons.person,
-                          color: theme.iconTheme.color?.withOpacity(0.6),
+                          color: theme.iconTheme.color?.withValues(alpha: 0.6),
                           size: 20,
                         ),
                       )
@@ -84,7 +84,7 @@ class ChatBubble extends StatelessWidget {
                         padding: const EdgeInsets.only(left: 8),
                         child: Icon(
                           Icons.person,
-                          color: theme.iconTheme.color?.withOpacity(0.6),
+                          color: theme.iconTheme.color?.withValues(alpha: 0.6),
                           size: 20,
                         ),
                       )

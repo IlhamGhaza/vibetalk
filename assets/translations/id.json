@@ -13,6 +13,7 @@
     "auth": {
         "login": "Masuk",
         "register": "Daftar",
+        "feature_not_available": "Maaf, fitur ini belum tersedia",
         "logout": "Keluar",
         "logout_confirmation": "Apakah kamu yakin ingin keluar?",
         "username": "Nama Pengguna",

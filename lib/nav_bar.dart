@@ -38,19 +38,21 @@ class _NavBarState extends State<NavBar> {
   // Data untuk item navigasi
   final List<_NavigationItemData> _navItemData = [
     _NavigationItemData(
-        icon: Icons.home_outlined,
-        selectedIcon: Icons.home_rounded,
-        label: 'Home'),
+      icon: Icons.home_outlined,
+      selectedIcon: Icons.home_rounded,
+      label: 'Home',
+    ),
     _NavigationItemData(
-        icon: Icons.contacts_outlined,
-        selectedIcon: Icons.contacts_rounded,
-        label: 'Contact'),
+      icon: Icons.contacts_outlined,
+      selectedIcon: Icons.contacts_rounded,
+      label: 'Contact',
+    ),
     _NavigationItemData(
-        icon: Icons.person_outline_rounded,
-        selectedIcon: Icons.person_rounded,
-        label: 'Profile'),
+      icon: Icons.person_outline_rounded,
+      selectedIcon: Icons.person_rounded,
+      label: 'Profile',
+    ),
   ];
-
 
   // Animasi perpindahan halaman
   void _onItemTapped(int index) {
@@ -75,10 +77,7 @@ class _NavBarState extends State<NavBar> {
                 ? colorScheme.primary
                 : colorScheme.onSurfaceVariant,
           ),
-          selectedIcon: Icon(
-            item.selectedIcon,
-            color: colorScheme.primary,
-          ),
+          selectedIcon: Icon(item.selectedIcon, color: colorScheme.primary),
           label: item.label,
         );
       }).toList();
@@ -95,10 +94,7 @@ class _NavBarState extends State<NavBar> {
                 ? colorScheme.primary
                 : colorScheme.onSurfaceVariant,
           ),
-          selectedIcon: Icon(
-            item.selectedIcon,
-            color: colorScheme.primary,
-          ),
+          selectedIcon: Icon(item.selectedIcon, color: colorScheme.primary),
           label: Text(item.label),
         );
       }).toList();
@@ -106,26 +102,29 @@ class _NavBarState extends State<NavBar> {
 
     Widget bottomNavBarWidget() {
       return Container(
-          decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: colorScheme.shadow.withOpacity(0.1), // Menggunakan withOpacity
-                blurRadius: 20,
-                offset: const Offset(0, -5),
-              ),
-            ],
-          ),
-          child: NavigationBar(
-            height: 65,
-            elevation: 0,
-            selectedIndex: _selectedIndex,
-            onDestinationSelected: _onItemTapped,
-            backgroundColor: colorScheme.surface,
-            indicatorColor: colorScheme.primaryContainer,
-            labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-            animationDuration: const Duration(milliseconds: 500),
-            destinations: buildBottomNavDestinations(),
-          ));
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: colorScheme.shadow.withValues(
+                alpha: 0.1,
+              ), // Menggunakan withOpacity
+              blurRadius: 20,
+              offset: const Offset(0, -5),
+            ),
+          ],
+        ),
+        child: NavigationBar(
+          height: 65,
+          elevation: 0,
+          selectedIndex: _selectedIndex,
+          onDestinationSelected: _onItemTapped,
+          backgroundColor: colorScheme.surface,
+          indicatorColor: colorScheme.primaryContainer,
+          labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+          animationDuration: const Duration(milliseconds: 500),
+          destinations: buildBottomNavDestinations(),
+        ),
+      );
     }
 
     Widget navigationRailWidget() {
@@ -136,7 +135,7 @@ class _NavBarState extends State<NavBar> {
         backgroundColor: colorScheme.surface,
         indicatorColor: colorScheme.primaryContainer,
         elevation: 4,
-        minWidth: 80, 
+        minWidth: 80,
         destinations: buildNavRailDestinations(),
       );
     }
@@ -146,10 +145,7 @@ class _NavBarState extends State<NavBar> {
         children: [
           if (!isMobile) navigationRailWidget(),
           Expanded(
-            child: IndexedStack(
-              index: _selectedIndex,
-              children: _pages,
-            ),
+            child: IndexedStack(index: _selectedIndex, children: _pages),
           ),
         ],
       ),

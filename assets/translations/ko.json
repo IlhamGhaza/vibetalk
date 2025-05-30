@@ -13,6 +13,7 @@
     "auth": {
         "login": "로그인",
         "register": "회원가입",
+        "feature_not_available": "죄송합니다. 이 기능은 아직 사용할 수 없습니다",
         "logout": "로그아웃",
         "logout_confirmation": "로그아웃하시겠습니까?",
         "username": "사용자 이름",
