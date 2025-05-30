@@ -290,7 +290,12 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                           elevation: 0,
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          SnackbarUtils(
+                            text: 'auth.feature_not_available'.tr(),
+                            backgroundColor: Colors.red,
+                          ).showErrorSnackBar(context);
+                        },
                       ),
                     ],
                   ),

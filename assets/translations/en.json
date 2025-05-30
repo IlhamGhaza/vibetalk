@@ -13,6 +13,7 @@
   "auth": {
     "login": "Login",
     "register": "Register",
+    "feature_not_available": "Sorry this feature is not available yet",
     "logout": "Logout",
     "logout_confirmation": "Are you sure you want to log out?",
     "username": "Username",
